@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>링크 제출 | 11/16 SID 실습 허브</title>
+<meta name="robots" content="noindex">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<style>
+  /* 값은 모두 DESIGN.md에서 온다 */
+  :root{
+    --canvas:#ffffff; --hairline:#e0e0e0; --ink:#161616; --ink-hover:#393939; --ink-muted:#525252;
+    --placeholder:#a8a8a8; --disabled:#c6c6c6; --danger:#da1e28;
+    --font:"Helvetica Neue",Helvetica,Arial,"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    --mono:ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  }
+  *,*::before,*::after{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;font-family:var(--font);font-size:15px;line-height:1.6;color:var(--ink);background:var(--canvas);
+       -webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word}
+  .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+  .wrap{max-width:1440px;margin:0 auto;padding:0 32px 96px}
+  header{border-top:8px solid var(--ink);padding:24px 0 64px}
+  .back{display:block;margin-top:0;font-size:13px;font-weight:700;line-height:1;letter-spacing:.02em;color:var(--ink);text-decoration:none;margin-bottom:24px}
+  .text:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+  h1{font-size:clamp(56px,10.5vw,160px);font-weight:700;line-height:.94;letter-spacing:-.04em;margin:0 0 0 -.04em}
+
+  form,.done{max-width:640px}
+  .field{margin-bottom:40px}
+  label{display:block;font-size:13px;font-weight:700;line-height:1.6;letter-spacing:.02em;color:var(--ink)}
+  input{display:block;width:100%;font-family:var(--font);font-size:28px;font-weight:500;line-height:1.3;color:var(--ink);
+        background:none;border:0;border-bottom:1px solid var(--hairline);border-radius:0;padding:12px 0;margin:0;
+        box-shadow:0 1px 0 transparent;transition:border-color .2s ease-out,box-shadow .2s ease-out}
+  input::placeholder{color:var(--placeholder);opacity:1}
+  input:hover{border-bottom-color:var(--ink-muted)}
+  input:focus{outline:0;border-bottom-color:var(--ink);box-shadow:0 1px 0 var(--ink)}
+  input[aria-invalid="true"]{border-bottom-color:var(--danger);box-shadow:0 1px 0 var(--danger)}
+  #url{font-family:var(--mono);font-size:20px;font-weight:400;line-height:1.4}
+  .msg{font-size:15px;line-height:1.6;margin:8px 0 0;min-height:24px;color:var(--ink-muted)}
+  .msg.bad{color:var(--danger)}
+
+  button.go{font-family:var(--font);font-size:17px;font-weight:700;line-height:1;color:var(--canvas);background:var(--ink);
+            border:0;border-radius:0;height:56px;padding:0 32px;margin:8px 0 0;cursor:pointer;transition:background-color .2s ease-out}
+  button.go:hover{background:var(--ink-hover)}
+  button.go:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+  button.go[disabled]{background:var(--disabled);cursor:default}
+
+  .done h2{font-size:28px;font-weight:700;line-height:1.3;margin:0;outline:0}
+  .done dl{margin:24px 0 0;display:grid;grid-template-columns:auto 1fr;gap:8px 32px}
+  .done dt{color:var(--ink-muted)}
+  .done dd{margin:0;overflow-wrap:anywhere}
+  .done #outUrl{font-family:var(--mono);font-size:15px;line-height:1.9}
+  .done .acts{margin:40px 0 0;display:flex;flex-wrap:wrap;gap:16px 32px}
+  .text{font:inherit;color:var(--ink);background:none;border:0;padding:0;cursor:pointer;text-decoration:underline;text-underline-offset:4px}
+  [hidden]{display:none !important}
+  @media (prefers-reduced-motion:no-preference){
+    .done:not([hidden]){animation:up .2s ease-out both}
+    @keyframes up{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  }
+  @media (max-width:640px){
+    .wrap{padding:0 16px 64px}
+    header{padding:16px 0 40px}
+    input{font-size:24px}
+    #url{font-size:17px}
+    button.go{width:100%}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="back">11/16 SID 실습 허브</p>
+    <h1>링크 제출</h1>
+  </header>
+  <main>
+    <form id="form" novalidate>
+      <div class="field">
+        <label for="name">이름</label>
+        <input id="name" name="name" type="text" autocomplete="name" maxlength="20" aria-describedby="nameMsg" required>
+        <p class="msg" id="nameMsg" role="alert"></p>
+      </div>
+      <div class="field">
+        <label for="url">링크</label>
+        <input id="url" name="url" type="url" inputmode="url" autocomplete="off" autocapitalize="off" spellcheck="false" placeholder="https://" maxlength="300" aria-describedby="urlMsg" required>
+        <p class="msg" id="urlMsg" role="alert">시크릿 창에서 열리는 https 주소를 넣어 주세요.</p>
+      </div>
+      <button type="submit" class="go" id="send">제출</button>
+      <p class="msg bad" id="sendMsg" role="alert"></p>
+    </form>
+
+    <section class="done" id="done" hidden aria-live="polite">
+      <h2 tabindex="-1">받았어요.</h2>
+      <dl><dt>이름</dt><dd id="outName"></dd><dt>링크</dt><dd id="outUrl"></dd></dl>
+      <p class="acts"><button type="button" class="text" id="again">주소를 바꿔서 다시 내기</button></p>
+    </section>
+  </main>
+</div>
+<script>
+(function(){
+  /* 받는 곳: 응답이 비공개 시트에 쌓인다. 값이 비어 있으면 제출을 받지 않는다 */
+  var ENDPOINT = "https://docs.google.com/forms/d/e/1FAIpQLSca_EXia3lUgGBl-lXZJ647jlrrmFzh53en58nGWZM707RW3g/formResponse";
+  var FIELD_NAME = "entry.835316326", FIELD_URL = "entry.2096298179";
+  var URL_HINT = "시크릿 창에서 열리는 https 주소를 넣어 주세요.";
+
+  var form=document.getElementById('form'), nameEl=document.getElementById('name'), urlEl=document.getElementById('url');
+  var nameMsg=document.getElementById('nameMsg'), urlMsg=document.getElementById('urlMsg'), sendMsg=document.getElementById('sendMsg');
+  var send=document.getElementById('send'), done=document.getElementById('done');
+
+  function nameProblem(){ return nameEl.value.trim()?'':'이름을 적어 주세요.'; }
+  function urlProblem(){
+    var v=urlEl.value.trim(), u=null;
+    if(!v){return '올린 주소를 적어 주세요.';}
+    if(!/^[a-z]+:\/\//i.test(v)){v='https://'+v; urlEl.value=v;}
+    try{u=new URL(v);}catch(e){return '주소 모양이 아니에요. https://로 시작하는 주소를 붙여 넣어 주세요.';}
+    var h=u.hostname;
+    if(u.protocol==='file:'){return '내 컴퓨터 안의 파일 주소예요. 올린 뒤에 받은 https 주소를 넣어 주세요.';}
+    if(u.protocol!=='https:'){return 'https://로 시작하는 주소여야 해요.';}
+    if(h==='localhost'||h==='127.0.0.1'||h.slice(-10)==='.localhost'){return '내 컴퓨터에서만 열리는 주소예요. 올린 뒤에 받은 주소를 넣어 주세요.';}
+    if(h.indexOf('.')<0){return '주소 모양이 아니에요. 주소창의 주소를 그대로 붙여 넣어 주세요.';}
+    if(h==='vercel.com'||h==='github.com'||h==='app.netlify.com'){return '관리 화면의 주소예요. 사이트가 열리는 주소를 넣어 주세요.';}
+    return '';
+  }
+  function setName(msg){ nameMsg.textContent=msg; nameMsg.className=msg?'msg bad':'msg'; nameEl.setAttribute('aria-invalid',msg?'true':'false'); return !msg; }
+  function setUrl(msg){ urlMsg.textContent=msg||URL_HINT; urlMsg.className=msg?'msg bad':'msg'; urlEl.setAttribute('aria-invalid',msg?'true':'false'); return !msg; }
+  nameEl.addEventListener('input',function(){ if(nameEl.getAttribute('aria-invalid')==='true'){setName('');} });
+  urlEl.addEventListener('input',function(){ if(urlEl.getAttribute('aria-invalid')==='true'){setUrl('');} });
+
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    sendMsg.textContent='';
+    var okN=setName(nameProblem()), okU=setUrl(urlProblem());
+    if(!okN){nameEl.focus();return;}
+    if(!okU){urlEl.focus();return;}
+    if(!ENDPOINT){sendMsg.textContent='아직 제출을 받지 않고 있어요.';return;}
+    var body=new URLSearchParams(); body.append(FIELD_NAME,nameEl.value.trim()); body.append(FIELD_URL,urlEl.value.trim());
+    send.disabled=true; send.textContent='보내는 중';
+    fetch(ENDPOINT,{method:'POST',mode:'no-cors',body:body}).then(function(){
+      document.getElementById('outName').textContent=nameEl.value.trim();
+      document.getElementById('outUrl').textContent=urlEl.value.trim();
+      form.hidden=true; done.hidden=false; done.querySelector('h2').focus();
+    }).catch(function(){
+      sendMsg.textContent='보내지 못했어요. 인터넷 연결을 확인하고 다시 눌러 주세요.';
+    }).then(function(){ send.disabled=false; send.textContent='제출'; });
+  });
+  document.getElementById('again').addEventListener('click',function(){ done.hidden=true; form.hidden=false; urlEl.focus(); urlEl.select(); });
+})();
+</script>
+</body>
+</html>

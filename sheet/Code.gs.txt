@@ -1,0 +1,85 @@
+/**
+ * 제출된 주소를 열어 사이트 제목과 한 줄을 읽어 온다. 허브 카드에 쓴다.
+ * 시트에서 =SITEINFO(C2:C) 처럼 쓴다. 한 주소에 두 칸(제목, 한 줄)이 나온다.
+ * 읽지 못한 주소는 두 칸을 비워 둔다. 한 번 읽은 주소는 6시간 동안 다시 읽지 않는다.
+ * @param {string|Array<Array<string>>} urls 주소 하나 또는 주소가 든 범위
+ * @return {Array<Array<string>>} 제목과 한 줄
+ * @customfunction
+ */
+function SITEINFO(urls) {
+  var list = Array.isArray(urls) ? urls : [[urls]];
+  var cache = CacheService.getScriptCache();
+  var out = [], todo = [];
+  list.forEach(function (row, i) {
+    var url = String(row[0] || '').trim();
+    out.push(['', '']);
+    if (!/^https:\/\//i.test(url)) { return; }
+    if (/^https:\/\/(www\.)?claude\.ai\//i.test(url)) { return; }   /* 아티팩트는 겉 페이지만 읽혀서 제목을 알 수 없다 */
+    var key = keyOf_(url), hit = cache.get(key);
+    if (hit) { out[i] = JSON.parse(hit); return; }
+    todo.push({ i: i, url: url, key: key });
+  });
+  if (todo.length) {
+    var replies = [];
+    try {
+      replies = UrlFetchApp.fetchAll(todo.slice(0, 40).map(function (t) {
+        return { url: t.url, muteHttpExceptions: true, followRedirects: true, headers: { 'User-Agent': 'Mozilla/5.0' } };
+      }));
+    } catch (e) { replies = []; }
+    replies.forEach(function (res, n) {
+      var t = todo[n], info = ['', ''], ok = false;
+      try {
+        if (res.getResponseCode() < 400) { info = read_(res.getContentText('UTF-8')); ok = true; }
+      } catch (e) {}
+      out[t.i] = info;
+      cache.put(t.key, JSON.stringify(info), ok ? 21600 : 300);   /* 읽지 못한 주소는 5분 뒤에 다시 읽는다 */
+    });
+  }
+  return out;
+}
+
+function keyOf_(url) {
+  var d = Utilities.computeDigest(Utilities.DigestAlgorithm.MD5, url, Utilities.Charset.UTF_8);
+  return 'siteinfo2:' + Utilities.base64EncodeWebSafe(d);
+}
+
+function plain_(s) {
+  return String(s || '')
+    .replace(/&nbsp;/g, ' ').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"').replace(/&#39;|&apos;/g, "'")
+    .replace(/&#(\d+);/g, function (m, n) { return String.fromCharCode(Number(n)); })
+    .replace(/\s+/g, ' ').trim();
+}
+
+function meta_(html, name) {
+  var re1 = new RegExp('<meta[^>]+(?:name|property)=["\']' + name + '["\'][^>]*content=["\']([^"\']*)["\']', 'i');
+  var re2 = new RegExp('<meta[^>]+content=["\']([^"\']*)["\'][^>]*(?:name|property)=["\']' + name + '["\']', 'i');
+  var m = html.match(re1) || html.match(re2);
+  return m ? plain_(m[1]) : '';
+}
+
+/* 제목: <title>, 없거나 뜻 없는 이름이면 첫 큰 제목. 한 줄: 설명 메타, 없으면 화면의 첫 문장 */
+function read_(html) {
+  var body = html.replace(/<script[\s\S]*?<\/script>/gi, ' ').replace(/<style[\s\S]*?<\/style>/gi, ' ');
+  var m = html.match(/<title[^>]*>([\s\S]*?)<\/title>/i);
+  var title = m ? plain_(m[1]) : '';
+  var dull = /^(claude artifact|document|untitled|vite app|react app|vite \+ react|index|home|\d+)?$/i;
+  if (dull.test(title)) {
+    var og = meta_(html, 'og:title');
+    var h1 = body.match(/<h1[^>]*>([\s\S]*?)<\/h1>/i);
+    var big = h1 ? plain_(h1[1].replace(/<[^>]+>/g, ' ')) : '';
+    title = (!dull.test(og) && og) || big || '';
+  }
+  var line = meta_(html, 'description') || meta_(html, 'og:description');
+  if (/^try out artifacts/i.test(line)) { line = ''; }
+  if (!line) {
+    var texts = body.replace(/<[^>]+>/g, '\n').split('\n').map(plain_).filter(function (t) { return t; });
+    for (var i = 0; i < texts.length; i++) {
+      var t = texts[i];
+      if (t.length >= 8 && t.length <= 80 && /[.!?。…]$/.test(t) && t !== title) { line = t; break; }
+    }
+  }
+  if (title.length > 60) { title = title.slice(0, 60); }
+  if (line.length > 100) { line = line.slice(0, 100); }
+  return [title, line];
+}
