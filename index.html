@@ -234,7 +234,9 @@ try{ if(sessionStorage.getItem('si-hub-token') || localStorage.getItem('si-hub-t
     return window.fetch(ENDPOINT, {method:'POST', redirect:'follow', headers:{'Content-Type':'text/plain;charset=utf-8'}, body:JSON.stringify(body)})
       .then(function(r){ if(!r.ok){throw new Error('연결하지 못했어요.');} return r.json(); });
   }
-  function forget(){ try{ sessionStorage.removeItem(KEY_TOKEN); localStorage.removeItem(KEY_TOKEN); }catch(e){} }
+  /* 마지막에 받은 목록을 이 탭에만 적어 둔다. 사이트를 열었다가 돌아오면 기다리지 않고 바로 보여 주고, 뒤에서 새로 받아 달라진 카드만 바꾼다 */
+  var KEY_LAST = 'sid-sites-last';
+  function forget(){ try{ sessionStorage.removeItem(KEY_TOKEN); localStorage.removeItem(KEY_TOKEN); sessionStorage.removeItem(KEY_LAST); }catch(e){} }
   function settle(){ document.documentElement.classList.remove('entering'); }
   function show(inside){
     settle(); gate.hidden = inside; grid.hidden = !inside; foot.hidden = !inside; out.hidden = !inside;
@@ -258,6 +260,7 @@ try{ if(sessionStorage.getItem('si-hub-token') || localStorage.getItem('si-hub-t
     });
     current = EXAMPLES.concat(rows);
     render(current);
+    try{ sessionStorage.setItem(KEY_LAST, JSON.stringify({ok:true, rows:j.rows, shots:j.shots || {}})); }catch(e){}
     return true;
   }
   var busy = false;
@@ -294,6 +297,7 @@ try{ if(sessionStorage.getItem('si-hub-token') || localStorage.getItem('si-hub-t
     try{ token = sessionStorage.getItem(KEY_TOKEN) || localStorage.getItem(KEY_TOKEN) || ''; }catch(e){}
     if(token){
       gateOk.disabled = true;
+      try{ var last = JSON.parse(sessionStorage.getItem(KEY_LAST) || 'null'); if(last && last.ok && take(last)){ show(true); } }catch(e){}
       enter().catch(function(){ if(token){ gateMsg.textContent = '불러오지 못했어요. 새로 고치거나 다시 로그인해 주세요.'; } }).then(function(){ settle(); gateOk.disabled = false; });
     }
   }
