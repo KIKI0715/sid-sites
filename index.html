@@ -266,8 +266,9 @@ try{ if(sessionStorage.getItem('si-hub-token') || localStorage.getItem('si-hub-t
     busy = true;
     call({action:'sites', token:token}).then(take).then(function(){busy=false;}, function(){busy=false;});
   }
-  function enter(){
-    return call({action:'sites', token:token}).then(function(j){
+  /* pre = 로그인 응답에 같이 실려 온 목록. 있으면 다시 묻지 않는다 */
+  function enter(pre){
+    return (pre ? Promise.resolve(pre) : call({action:'sites', token:token})).then(function(j){
       if(!take(j)){ if(token){ throw new Error(j.error || '불러오지 못했어요.'); } return; }
       show(true);
     });
@@ -278,11 +279,11 @@ try{ if(sessionStorage.getItem('si-hub-token') || localStorage.getItem('si-hub-t
     e.preventDefault(); if(!ENDPOINT){return;}
     var uid = document.getElementById('uid'), upw = document.getElementById('upw'), keep = document.getElementById('keep').checked;
     gateOk.disabled = true; gateMsg.textContent = '';
-    call({action:'login', id:uid.value, pw:upw.value, keep:keep}).then(function(j){
+    call({action:'login', id:uid.value, pw:upw.value, keep:keep, want:'sites'}).then(function(j){
       if(!j.ok){ throw new Error(j.error || '로그인하지 못했어요.'); }
       token = j.token; upw.value = '';
       try{ (keep ? localStorage : sessionStorage).setItem(KEY_TOKEN, token); }catch(e2){}
-      return enter();
+      return enter(j.data);
     }).catch(function(err){ if(!gate.hidden){ gateMsg.textContent = (err && err.message) || '연결하지 못했어요.'; } })
       .then(function(){ gateOk.disabled = false; });
   });
