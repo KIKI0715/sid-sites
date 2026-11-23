@@ -1,0 +1,584 @@
+/* =========================================================
+   BERATAN — 공통 스타일시트 (index / notes / my scent 공용)
+   ========================================================= */
+
+:root {
+  --cream: #f4eee2;
+  --ink: #2a241d;
+  --serif: 'Cormorant Garamond', 'Noto Serif KR', Georgia, serif;
+
+  /* 밑줄 애니메이션 시간 (변수: 0.05s ~ 1s, 기본 0.25s) */
+  --u-dur: 0.25s;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--cream);
+  color: var(--ink);
+  font-family: var(--serif);
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+}
+
+/* =========================================================
+   헤더 / 네비게이션 (상단 왼쪽, #05 애니메이티드 언더라인)
+   - 글자 색: 상속 색 / 굵게
+   - 밑줄: 2px, 처음 길이 0%
+   - hover(진입): 왼쪽 → 오른쪽으로 늘어남
+   - hover 해제: 오른쪽 → 왼쪽으로 지워짐
+   ========================================================= */
+
+.site-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  padding: clamp(20px, 3vh, 32px) clamp(24px, 4vw, 56px);
+  color: #fff;
+  mix-blend-mode: difference; /* 밝은 사진/크림 배경 모두에서 읽히도록 */
+  pointer-events: none;
+}
+
+.site-nav {
+  pointer-events: auto;
+}
+
+.site-menu {
+  list-style: none;
+  display: flex;
+  gap: clamp(20px, 3vw, 40px);
+}
+
+.nav-link {
+  position: relative;
+  display: inline-block;
+  padding: 4px 0;
+  color: inherit;             /* 상속 색 */
+  font-weight: 700;           /* 굵게 */
+  font-size: 1rem;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  transform: scaleX(0);       /* 처음 길이 0% */
+  transform-origin: left center;
+  transition: transform var(--u-dur) ease-in-out;
+}
+
+/* 트리거: 마우스 진입 / 키보드 포커스 */
+.nav-link:hover::after,
+.nav-link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.nav-link:focus-visible {
+  outline: none;
+}
+
+/* =========================================================
+   타이핑 효과 (#42)
+   - 글자 수(.done)만큼 보이고, 나머지(.ghost)는 투명하게 있어서
+     글자가 늘어나도 아래 내용이 밀리지 않음
+   - 끝의 커서(.caret)는 깜빡이고, 문장이 끝나면 사라짐
+   ========================================================= */
+
+.type {
+  position: relative;
+}
+
+.type .ghost {
+  color: transparent;
+}
+
+.type .caret {
+  display: inline-block;
+  width: 0.06em;
+  height: 1em;
+  margin-left: 0.08em;
+  background: currentColor;
+  vertical-align: -0.12em;
+  animation: caret-blink 1s steps(1, end) infinite;
+}
+
+/* 아직 시작 전(대기 중)에는 커서를 숨김 */
+.type:not(.is-typing) .caret {
+  visibility: hidden;
+}
+
+.type.is-done .caret {
+  display: none;
+}
+
+@keyframes caret-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+/* =========================================================
+   INDEX — 히어로 (전체 화면 사진, 좌측 하단 정렬)
+   ========================================================= */
+
+.hero {
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  color: var(--cream);
+  background:
+    linear-gradient(to top, rgba(18, 14, 9, 0.72), rgba(18, 14, 9, 0) 60%),
+    url("../img/beratan-main.webp") center / cover no-repeat,
+    #2f4a3a;                  /* 사진이 없을 때의 대체 색 */
+}
+
+.hero-inner {
+  position: absolute;
+  left: clamp(24px, 5vw, 72px);
+  right: clamp(24px, 5vw, 72px);
+  bottom: clamp(32px, 8vh, 96px);
+}
+
+.hero-title {
+  font-weight: 500;
+  font-size: clamp(4.5rem, 19vw, 18rem);
+  line-height: 0.82;
+  letter-spacing: -0.01em;
+}
+
+.hero-lead {
+  margin-top: clamp(20px, 3vh, 36px);
+  max-width: 34ch;
+  min-height: 3.4em;        /* 줄이 늘어나도 레이아웃이 밀리지 않도록 자리 미리 확보 */
+  font-size: clamp(1.05rem, 1.8vw, 1.5rem);
+}
+
+/* =========================================================
+   INDEX — 스크롤 고정 문장 "Every scent tells a story."
+   - 위에서 내려오면서 화면 중간에 고정
+   - --p 값(0 → 1)은 main.js가 스크롤에 맞춰 갱신
+   ========================================================= */
+
+.sticky-stage {
+  position: relative;
+  height: 200vh;
+}
+
+.sticky-inner {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 0 clamp(24px, 5vw, 72px);
+}
+
+.story {
+  --p: 0;
+  max-width: 26ch;
+  font-size: clamp(1.7rem, 3.8vw, 3.4rem);
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.1;
+  text-align: center;
+  opacity: var(--p);
+  transform: translateY(calc((1 - var(--p)) * -50vh));
+  will-change: transform, opacity;
+}
+
+/* =========================================================
+   INDEX — 베라탄 사진 + 소개 문장
+   ========================================================= */
+
+.beratan {
+  padding: clamp(40px, 8vh, 96px) 0 clamp(80px, 14vh, 160px);
+}
+
+.gallery {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(12px, 2vw, 28px);
+  padding: 0 clamp(24px, 5vw, 72px);
+}
+
+.photo {
+  aspect-ratio: 3 / 4;
+  background-color: #355c48;  /* 사진이 없을 때의 대체 색 */
+  background-size: cover;
+  background-position: center;
+}
+
+.photo-1 { background-image: url("../img/beratan-01.webp"); }
+.photo-2 { background-image: url("../img/beratan-02.webp"); }
+.photo-3 { background-image: url("../img/beratan-03.webp"); }
+.photo-4 { background-image: url("../img/beratan-04.jpg"); }
+
+.note-block {
+  max-width: 880px;
+  margin: clamp(64px, 12vh, 140px) auto 0;
+  padding: 0 clamp(24px, 5vw, 72px);
+  font-size: clamp(1.4rem, 2.8vw, 2.3rem);
+  line-height: 1.55;
+  text-align: center;
+}
+
+/* =========================================================
+   NOTES / MY SCENT — 공통 내부 페이지
+   ========================================================= */
+
+.page {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: clamp(104px, 14vh, 140px) clamp(24px, 5vw, 72px) clamp(96px, 16vh, 160px);
+}
+
+.keynotes-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: clamp(32px, 6vw, 96px);
+  align-items: start;
+}
+
+.keynotes-grid .page-figure {
+  margin: 0;
+  max-width: none;
+}
+
+.keynotes-closing {
+  margin-top: clamp(56px, 10vh, 112px);
+  max-width: 34ch;
+}
+
+/* KEY NOTES — 노트별 일러스트 (인라인 SVG, 클릭 시 살짝 흔들림) */
+.note-art {
+  position: relative;
+  display: block;
+  margin: 28px 0 0;
+  width: min(230px, 72%);
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+
+.note-art svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.note-art:hover svg {
+  transform: translateY(-4px);
+}
+
+.note-art:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 8px;
+}
+
+.note-art.is-tap svg {
+  animation: note-tap 0.7s cubic-bezier(0.3, 0.7, 0.3, 1);
+}
+
+@keyframes note-tap {
+  0%   { transform: rotate(0deg) scale(1); }
+  25%  { transform: rotate(-4deg) scale(1.04); }
+  55%  { transform: rotate(2.5deg) scale(1.015); }
+  80%  { transform: rotate(-1deg) scale(1); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+/* =========================================================
+   KEY NOTES — 아코디언 (#49)
+   - 제목 줄 클릭 → 아래 내용 펼침 (grid-template-rows 0fr → 1fr)
+   ========================================================= */
+
+.accordion {
+  border-top: 1px solid rgba(42, 36, 29, 0.2);
+}
+
+.acc-item {
+  border-bottom: 1px solid rgba(42, 36, 29, 0.2);
+}
+
+.acc-heading {
+  font-weight: 500;
+  font-size: inherit;
+}
+
+.acc-trigger {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 22px 0;
+  background: none;
+  border: 0;
+  color: inherit;
+  font: inherit;
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.acc-trigger:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+.acc-icon {
+  display: inline-block;
+  font-weight: 400;
+  font-size: 1.4em;
+  line-height: 1;
+  transition: transform 0.5s ease;
+}
+
+.acc-item.is-open .acc-icon {
+  transform: rotate(45deg);
+}
+
+.acc-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  transition: grid-template-rows 0.5s ease;
+}
+
+.acc-item.is-open .acc-panel {
+  grid-template-rows: 1fr;
+}
+
+.acc-inner {
+  min-height: 0;
+  overflow: hidden;
+  padding-bottom: 0;
+}
+
+.acc-item.is-open .acc-inner {
+  padding-bottom: 28px;
+}
+
+/* =========================================================
+   KEY NOTES — 스태거 리빌 (#7)
+   - 줄이 펼쳐지면 문단이 아래 16px에서 제자리로 올라옴
+   - 문단 0.5초, 문단 사이 0.12초 간격 (--i 로 순서 지정)
+   ========================================================= */
+
+.rise {
+  opacity: 0;
+  transform: translateY(16px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  transition-delay: 0s;
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  margin-bottom: 0;
+}
+
+.acc-item.is-open .rise {
+  opacity: 1;
+  transform: none;
+  transition-delay: calc(var(--i) * 0.12s);
+}
+
+/* =========================================================
+   KEY NOTES — 3D 장면 (선택)
+   - 줄이 열려 있는 동안만 회전 (닫히면 멈춤)
+   ========================================================= */
+
+.scene {
+  perspective: 700px;
+  height: 200px;
+  margin-top: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ring {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  transform-style: preserve-3d;
+  animation: scene-spin 14s linear infinite;
+  animation-play-state: paused;
+}
+
+.acc-item.is-open .ring {
+  animation-play-state: running;
+}
+
+.face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(42, 36, 29, 0.35);
+  background: rgba(244, 238, 226, 0.6);
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  backface-visibility: hidden;
+}
+
+.face:nth-child(1) { transform: rotateY(0deg) translateZ(60px); }
+.face:nth-child(2) { transform: rotateY(90deg) translateZ(60px); }
+.face:nth-child(3) { transform: rotateY(180deg) translateZ(60px); }
+.face:nth-child(4) { transform: rotateY(270deg) translateZ(60px); }
+
+@keyframes scene-spin {
+  from { transform: rotateY(0deg) rotateX(-12deg); }
+  to   { transform: rotateY(360deg) rotateX(-12deg); }
+}
+
+.page h1 {
+  font-weight: 500;
+  font-size: clamp(3.5rem, 9vw, 8rem);
+  line-height: 1;
+  margin-bottom: clamp(32px, 6vh, 64px);
+}
+
+.page p {
+  max-width: 40ch;
+  margin-bottom: 1.2em;
+  font-size: clamp(1.15rem, 2vw, 1.5rem);
+}
+
+.page .page-lead {
+  font-size: clamp(1.5rem, 3vw, 2.4rem);
+  font-style: italic;
+  line-height: 1.4;
+  max-width: 24ch;
+  margin-bottom: clamp(40px, 8vh, 72px);
+}
+
+.page-figure {
+  margin: clamp(48px, 9vh, 96px) 0;
+  max-width: 560px;
+}
+
+.page-figure img {
+  width: 100%;
+  aspect-ratio: 4 / 5;
+  object-fit: cover;
+}
+
+.notes-list {
+  max-width: 640px;
+  margin-top: 16px;
+}
+
+.notes-list > div {
+  display: grid;
+  grid-template-columns: 9em 1fr;
+  gap: 24px;
+  padding: 22px 0;
+  border-top: 1px solid rgba(42, 36, 29, 0.2);
+  align-items: baseline;
+}
+
+.notes-list dt {
+  font-weight: 700;
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+}
+
+.notes-list dd {
+  font-size: clamp(1.1rem, 2vw, 1.4rem);
+  margin: 0;
+}
+
+/* =========================================================
+   푸터
+   ========================================================= */
+
+.site-footer {
+  padding: 32px 24px;
+  text-align: center;
+  font-size: 0.9rem;
+  letter-spacing: 0.04em;
+  opacity: 0.6;
+}
+
+/* =========================================================
+   반응형
+   ========================================================= */
+
+@media (max-width: 1024px) {
+  .gallery {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .site-menu {
+    gap: 18px;
+  }
+
+  .gallery {
+    grid-template-columns: 1fr;
+  }
+
+  .keynotes-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* 움직임을 줄이고 싶은 사용자 설정 존중 */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .nav-link::after {
+    transition: none;
+  }
+
+  .type .caret {
+    animation: none;
+  }
+
+  .rise {
+    transition: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .ring {
+    animation: none;
+  }
+
+  .note-art.is-tap svg {
+    animation: none;
+  }
+}

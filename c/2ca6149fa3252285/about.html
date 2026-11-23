@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<!-- 실습 허브 미리보기용 사본. 원본: claude.ai 아티팩트. 받은 날: 2026-11-23 -->
+<meta name="robots" content="noindex">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Note · Liftoff</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400&family=Inter:wght@400;500&family=Noto+Sans+KR:wght@400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css">
+<style>
+  :root{
+    --bg:#0B0B0D; --fg:#ECECEC; --accent:#E1251B;
+    --serif:"Cormorant Garamond", "Times New Roman", serif;
+    --sans:"Inter", "Pretendard Variable", Pretendard, system-ui, sans-serif;
+    --ko:"Pretendard Variable", Pretendard, "Noto Sans KR", -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+    --glass-fill:rgba(255,255,255,.06);
+    --glass-line:rgba(255,255,255,.12);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:var(--bg);color:var(--fg)}
+  body{font-family:var(--ko);font-size:15px;font-weight:400;line-height:1.8;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+  a{color:inherit;text-decoration:none}
+  button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+
+  /* 유리 뒤의 빛 번짐 */
+  .glow{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+  .glow i{position:absolute;border-radius:50%;filter:blur(110px);opacity:.55}
+  .glow .r{width:46vw;height:46vw;left:-12vw;top:30vh;background:rgba(225,37,27,.32)}
+  .glow .b{width:52vw;height:52vw;right:-16vw;top:-14vh;background:rgba(110,130,160,.30)}
+
+  /* 유리 */
+  .glass{
+    background:var(--glass-fill);
+    -webkit-backdrop-filter:blur(20px);backdrop-filter:blur(20px);
+    border:1px solid var(--glass-line);border-radius:16px;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.14);
+  }
+
+  /* 메뉴 */
+  .nav{
+    position:fixed;z-index:20;top:20px;left:50%;transform:translateX(-50%);
+    width:min(1120px, calc(100% - 32px));
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 24px;
+  }
+  .brand,.menu a{font-family:var(--sans);font-size:11px;letter-spacing:.24em;text-transform:uppercase}
+  .brand{font-weight:500}
+  .menu{display:flex;gap:32px}
+  .menu a{position:relative;opacity:.6;transition:opacity .2s}
+  .menu a:hover{opacity:1}
+  .menu a[aria-current="page"]{opacity:1;color:var(--accent)}
+  .menu a[aria-current="page"]::after{content:"";position:absolute;left:0;right:.24em;bottom:-6px;height:1px;background:var(--accent)}
+  @media (max-width:520px){
+    .nav{padding:12px 16px;top:12px;width:calc(100% - 24px)}
+    .menu{gap:16px}
+    .brand,.menu a{letter-spacing:.16em}
+  }
+
+  .page{position:relative;z-index:1;width:min(1120px, calc(100% - 32px));margin:0 auto;padding:clamp(140px,18vw,220px) 0 140px}
+  .page-title{font-family:var(--serif);font-weight:300;font-size:clamp(76px,18vw,264px);line-height:.95;letter-spacing:-.01em;text-align:center;margin-bottom:clamp(56px,8vw,112px)}
+  .card{position:relative;max-width:760px;margin:0 auto;padding:clamp(28px,5vw,56px);overflow:hidden}
+  .switch-wrap{position:absolute;top:clamp(20px,3vw,32px);right:clamp(20px,3vw,32px);z-index:3;display:flex;align-items:center;gap:12px}
+  .lab{font-family:var(--sans);font-size:11px;letter-spacing:.24em;text-transform:uppercase}
+  .lab.state{width:2.6em;opacity:.6}
+  .switch{position:relative;width:52px;height:28px;border-radius:14px;border:1px solid rgba(255,255,255,.22);background:rgba(255,255,255,.04)}
+  .knob{position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#8a8a8f;transition:transform .25s ease, background .25s}
+  .switch[aria-checked="true"] .knob{transform:translateX(24px);background:#ffffff;box-shadow:0 0 10px rgba(255,255,255,.7)}
+  .switch:focus-visible{outline:1px solid var(--accent);outline-offset:3px}
+  .text{position:relative}
+  .text h2{font-family:var(--serif);font-weight:400;font-size:clamp(34px,6vw,88px);line-height:1;margin-bottom:28px;padding-right:180px}
+  .text p{max-width:38em}
+  .dim{opacity:.35}
+  .lit{position:absolute;inset:0;pointer-events:none;
+    -webkit-mask-image:linear-gradient(to bottom, #000 calc(var(--p,0)*115% - 15%), transparent calc(var(--p,0)*115%));
+            mask-image:linear-gradient(to bottom, #000 calc(var(--p,0)*115% - 15%), transparent calc(var(--p,0)*115%));}
+  .beams{position:absolute;inset:0;pointer-events:none;z-index:1}
+  .beam{position:absolute;top:0;bottom:0;right:0;left:0;transform-origin:var(--ox) 0;transform:scaleY(0);opacity:0;
+    background:linear-gradient(to bottom, rgba(255,255,255,.22), rgba(255,255,255,.03) 85%, rgba(255,255,255,0));filter:blur(10px)}
+  @media (max-width:560px){
+    .text h2{padding-right:0}
+    .dim,.lit{padding-top:44px}
+  }
+</style>
+</head>
+<body>
+  <div class="glow" aria-hidden="true"><i class="r"></i><i class="b"></i></div>
+
+  <header class="nav glass">
+    <a class="brand" href="index.html">Liftoff</a>
+    <nav class="menu">
+      <a href="index.html">Index</a>
+      <a href="detail.html">Flight</a>
+      <a href="about.html" aria-current="page">Note</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <h1 class="page-title">Note</h1>
+
+    <article class="card glass" id="card">
+      <div class="beams" aria-hidden="true"><div class="beam" id="beamA"></div><div class="beam" id="beamB"></div></div>
+      <div class="switch-wrap">
+        <span class="lab">Lights</span>
+        <button class="switch" id="sw" role="switch" aria-checked="false" aria-label="Lights"><span class="knob"></span></button>
+        <span class="lab state" id="state">Off</span>
+      </div>
+      <div class="text" id="text">
+        <div class="dim">
+          <h2>Seohyeon</h2>
+          <p>하늘을 나는 테슬라라는 이야기를 들었을 때 가장 먼저 궁금했던 것은 성능이 아니라, 땅에서 하늘로 넘어가는 그 순간이 어떻게 생겼을까였다. 그 순간을 화면에서 직접 눌러 볼 수 있게 만들고 싶어서 이 주제를 골랐다.</p>
+        </div>
+        <div class="lit" id="lit" aria-hidden="true">
+          <h2>Seohyeon</h2>
+          <p>하늘을 나는 테슬라라는 이야기를 들었을 때 가장 먼저 궁금했던 것은 성능이 아니라, 땅에서 하늘로 넘어가는 그 순간이 어떻게 생겼을까였다. 그 순간을 화면에서 직접 눌러 볼 수 있게 만들고 싶어서 이 주제를 골랐다.</p>
+        </div>
+      </div>
+    </article>
+  </main>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const sw = document.getElementById('sw'), stateEl = document.getElementById('state');
+  const lit = document.getElementById('lit'), card = document.getElementById('card');
+  const beams = [document.getElementById('beamA'), document.getElementById('beamB')];
+  let on = false, busy = false;
+
+  // 스위치 아래에서 시작해 글 위로 퍼지는 빛 두 줄기
+  function shapeBeams(){
+    const c = card.getBoundingClientRect(), s = sw.getBoundingClientRect();
+    const ox = s.left + s.width/2 - c.left;
+    const oy = s.bottom - c.top;
+    const w = c.width, h = c.height;
+    [[-10, -0.95, -0.35], [10, -0.6, 0.05]].forEach(([dx, l, r], i) => {
+      const x0 = ox + dx;
+      const pct = v => (v / w * 100).toFixed(2) + '%';
+      const top = (oy / h * 100).toFixed(2) + '%';
+      beams[i].style.clipPath = `polygon(${pct(x0-4)} ${top}, ${pct(x0+4)} ${top}, ${pct(x0 + r*w)} 100%, ${pct(x0 + l*w)} 100%)`;
+      beams[i].style.setProperty('--ox', pct(x0));
+    });
+  }
+  addEventListener('resize', shapeBeams); shapeBeams();
+
+  const easeOut = x => 1 - Math.pow(1 - x, 3);
+  function run(from, to, dur, done){
+    const t0 = performance.now();
+    (function step(now){
+      const f = Math.min((now - t0) / dur, 1), e = easeOut(f);
+      const p = from + (to - from) * e;
+      lit.style.setProperty('--p', p);
+      beams.forEach(b => { b.style.transform = `scaleY(${p})`; b.style.opacity = p; });
+      if (f < 1) requestAnimationFrame(step); else done();
+    })(t0);
+  }
+  function set(p){
+    lit.style.setProperty('--p', p);
+    beams.forEach(b => { b.style.transform = `scaleY(${p})`; b.style.opacity = p; });
+  }
+  sw.addEventListener('click', () => {
+    if (busy) return;
+    on = !on;
+    sw.setAttribute('aria-checked', on);
+    if (reduce){ set(on ? 1 : 0); stateEl.textContent = on ? 'On' : 'Off'; return; }
+    busy = true;
+    shapeBeams();
+    if (on) run(0, 1, 600, () => { stateEl.textContent = 'On'; busy = false; });
+    else run(1, 0, 400, () => { stateEl.textContent = 'Off'; busy = false; });
+  });
+})();
+</script>
+</body>
+</html>

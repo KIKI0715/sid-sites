@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<!-- 실습 허브 미리보기용 사본. 원본: claude.ai 아티팩트. 받은 날: 2026-11-23 -->
+<meta name="robots" content="noindex">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Choose — Plant Day</title>
+<style>@font-face{font-family:'Pretendard';src:url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2-variations'),url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2');font-weight:45 920;font-style:normal;font-display:swap}</style>
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  :root {
+    --bg: #F6F7F2;
+    --ink: #1F2A22;
+    --green: #3F7D4E;
+    --title: clamp(64px, 16vw, 240px);
+    --head: calc(var(--title) / 3);
+    --gutter: clamp(16px, 5vw, 80px);
+    --numw: clamp(40px, 8vw, 128px);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { overflow-x: clip; -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Pretendard', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.8;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, p, ol, ul { margin: 0; padding: 0; }
+  ol, ul { list-style: none; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  :focus-visible { outline: 1px solid var(--green); outline-offset: 4px; }
+  .sr {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+  }
+
+  /* Menu */
+  .site-header { padding: 28px var(--gutter); }
+  .menu { display: flex; gap: clamp(20px, 3vw, 40px); }
+  .menu a {
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+    padding: 6px 0;
+    display: inline-block;
+  }
+  .menu a[aria-current="page"] { font-weight: 600; color: var(--green); }
+
+  /* Type */
+  .site-title {
+    font-size: var(--title);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+  }
+  .page-title, .sub {
+    font-size: var(--head);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  .num { font-size: 13px; letter-spacing: 0.04em; line-height: 1.4; }
+  .text { max-width: 34em; }
+
+  main { padding: 0 var(--gutter); }
+  .page { padding-top: clamp(56px, 10vw, 160px); padding-bottom: clamp(96px, 14vw, 200px); }
+  .page-title { margin-bottom: clamp(48px, 8vw, 128px); }
+
+  /* Index */
+  .hero {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: clamp(32px, 6vw, 80px);
+  }
+  .intro { padding: 28vh 0 40vh; }
+  .lead { max-width: 12em; }
+  .lead .w { white-space: nowrap; }
+  .js .lead .c {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: calc(var(--i) * 0.04s);
+  }
+  .js .lead.in .c { opacity: 1; transform: none; }
+
+  /* Choose */
+  .steps { border-bottom: 1px solid var(--ink); }
+  .step { border-top: 1px solid var(--ink); }
+  .step-btn {
+    width: 100%;
+    display: grid;
+    grid-template-columns: var(--numw) minmax(0, 1fr) auto;
+    align-items: center;
+    padding: clamp(20px, 3vw, 40px) 0;
+    text-align: left;
+  }
+  .step-btn .sub { font-size: var(--head); }
+  .plus {
+    position: relative;
+    width: clamp(20px, 2.4vw, 32px);
+    height: clamp(20px, 2.4vw, 32px);
+    transition: transform 0.4s ease;
+  }
+  .plus::before, .plus::after {
+    content: "";
+    position: absolute;
+    background: var(--ink);
+  }
+  .plus::before { left: 0; right: 0; top: 50%; height: 1px; }
+  .plus::after { top: 0; bottom: 0; left: 50%; width: 1px; }
+  .step-btn[aria-expanded="true"] .plus { transform: rotate(45deg); }
+  .panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition: grid-template-rows 0.4s ease, visibility 0s linear 0.4s;
+  }
+  .panel.open {
+    grid-template-rows: 1fr;
+    visibility: visible;
+    transition: grid-template-rows 0.4s ease, visibility 0s;
+  }
+  .panel-in { overflow: hidden; min-height: 0; }
+  .panel p { padding: 0 0 clamp(32px, 4vw, 56px) var(--numw); }
+
+  /* Care */
+  .carousel {
+    max-width: 1040px;
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 48px;
+    grid-template-areas: "prev view next" ". dots .";
+    column-gap: clamp(16px, 3vw, 40px);
+    row-gap: 32px;
+    align-items: center;
+  }
+  .viewport {
+    grid-area: view;
+    overflow: hidden;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card {
+    flex: 0 0 100%;
+    min-width: 0;
+    border: 1px solid var(--ink);
+    padding: clamp(28px, 5vw, 64px);
+  }
+  .icon {
+    display: block;
+    width: 56px;
+    height: 56px;
+    margin-bottom: clamp(32px, 5vw, 64px);
+    overflow: visible;
+    fill: none;
+    stroke: var(--green);
+    stroke-width: 1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .icon * { vector-effect: non-scaling-stroke; }
+  .icon .move { transform-box: view-box; }
+  .icon .drop { transform-origin: 12px 12px; }
+  .icon .sun { transform-origin: 12px 12px; }
+  .icon .leaf { transform-origin: 5px 19px; }
+  .card .num { display: block; margin-bottom: 8px; }
+  .card .sub { margin-bottom: clamp(20px, 3vw, 32px); }
+  .play .drop { animation: drop 0.8s cubic-bezier(0.5, 0, 0.75, 0) 0.2s both; }
+  .play .sun { animation: spin 2.4s ease-in-out 0.2s both; }
+  .play .leaf { animation: sway 1.8s ease-in-out 0.2s both; }
+  @keyframes drop {
+    0% { transform: translateY(-14px); opacity: 0; }
+    20% { opacity: 1; }
+    70% { transform: translateY(0); animation-timing-function: ease-out; }
+    84% { transform: translateY(-1.5px); animation-timing-function: ease-in; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes sway {
+    0% { transform: rotate(0deg); }
+    20% { transform: rotate(9deg); }
+    45% { transform: rotate(-7deg); }
+    70% { transform: rotate(4deg); }
+    88% { transform: rotate(-2deg); }
+    100% { transform: rotate(0deg); }
+  }
+  .arrow {
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+  }
+  .arrow svg {
+    width: 24px; height: 24px;
+    fill: none; stroke: var(--ink); stroke-width: 1;
+    stroke-linecap: round; stroke-linejoin: round;
+  }
+  .arrow:disabled { cursor: default; opacity: 0.25; }
+  .prev { grid-area: prev; }
+  .next { grid-area: next; }
+  .dots { grid-area: dots; display: flex; justify-content: center; gap: 12px; }
+  .dot {
+    width: 8px; height: 8px;
+    border: 1px solid var(--ink);
+    border-radius: 50%;
+  }
+  .dot.on { background: var(--green); border-color: var(--green); }
+
+  @media (max-width: 600px) {
+    .carousel {
+      grid-template-columns: 48px minmax(0, 1fr) 48px;
+      grid-template-areas: "view view view" "prev dots next";
+      row-gap: 16px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition: none !important;
+      animation: none !important;
+    }
+    .js .lead .c { opacity: 1; transform: none; }
+  }
+</style>
+</head>
+<body>
+<header class="site-header">
+  <nav aria-label="Menu">
+    <ul class="menu">
+      <li><a href="index.html">Index</a></li>
+      <li><a href="choose.html" aria-current="page">Choose</a></li>
+      <li><a href="care.html">Care</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="page">
+  <h1 class="page-title">Choose</h1>
+  <ol class="steps">
+    <li class="step">
+      <h2>
+        <button class="step-btn" type="button" id="b1" aria-expanded="false" aria-controls="p1">
+          <span class="num">01</span>
+          <span class="sub">Light</span>
+          <span class="plus" aria-hidden="true"></span>
+        </button>
+      </h2>
+      <div class="panel" id="p1" role="region" aria-labelledby="b1">
+        <div class="panel-in"><p class="text">먼저 식물을 둘 자리에 하루 동안 해가 얼마나 드는지 살펴봅니다. 햇빛이 오래 드는 창가라면 올리브나무나 다육식물이 잘 자라고, 빛이 적은 방이라면 스킨답서스나 산세베리아처럼 그늘에서도 잘 버티는 식물이 어울립니다. 자리를 먼저 정하면 고를 식물도 자연스럽게 좁혀집니다.</p></div>
+      </div>
+    </li>
+    <li class="step">
+      <h2>
+        <button class="step-btn" type="button" id="b2" aria-expanded="false" aria-controls="p2">
+          <span class="num">02</span>
+          <span class="sub">Time</span>
+          <span class="plus" aria-hidden="true"></span>
+        </button>
+      </h2>
+      <div class="panel" id="p2" role="region" aria-labelledby="b2">
+        <div class="panel-in"><p class="text">다음으로 식물에게 쓸 수 있는 시간을 생각해 봅니다. 물을 자주 챙기기 어렵다면 스투키나 다육식물처럼 잎과 줄기에 물을 저장하는 식물이 좋습니다. 매일 들여다보는 게 즐겁다면 물과 습기를 좋아하는 고사리류나 아이비를 키워 볼 수 있습니다.</p></div>
+      </div>
+    </li>
+    <li class="step">
+      <h2>
+        <button class="step-btn" type="button" id="b3" aria-expanded="false" aria-controls="p3">
+          <span class="num">03</span>
+          <span class="sub">Size</span>
+          <span class="plus" aria-hidden="true"></span>
+        </button>
+      </h2>
+      <div class="panel" id="p3" role="region" aria-labelledby="b3">
+        <div class="panel-in"><p class="text">마지막으로 식물이 다 자랐을 때의 크기를 떠올려 봅니다. 책상 위에 둘 거라면 손바닥만 한 화분이 알맞고, 방 한쪽을 채우고 싶다면 몬스테라나 고무나무처럼 크게 자라는 식물도 좋습니다. 지금 모습보다 1년 뒤의 모습을 생각하고 고르면 자리를 옮기는 일이 줄어듭니다.</p></div>
+      </div>
+    </li>
+  </ol>
+</main>
+
+<script>
+(function () {
+  var buttons = Array.from(document.querySelectorAll('.step-btn'));
+  var openStep = null; // 지금 펼쳐진 줄 번호. 처음에는 없음
+
+  function render() {
+    buttons.forEach(function (btn, i) {
+      var on = openStep === i + 1;
+      btn.setAttribute('aria-expanded', on ? 'true' : 'false');
+      document.getElementById(btn.getAttribute('aria-controls')).classList.toggle('open', on);
+    });
+  }
+
+  buttons.forEach(function (btn, i) {
+    btn.addEventListener('click', function () {
+      openStep = openStep === i + 1 ? null : i + 1;
+      render();
+    });
+  });
+})();
+</script>
+</body>
+</html>

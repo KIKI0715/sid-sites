@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<!-- 실습 허브 미리보기용 사본. 원본: claude.ai 아티팩트. 받은 날: 2026-11-23 -->
+<meta name="robots" content="noindex"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QCY T17 2.0 — Process</title><script>try{if(localStorage.getItem('t17-theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}</script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Urbanist:wght@300;400;500;700&display=swap" rel="stylesheet"><style>
+@font-face{font-family:'Pretendard Variable';src:url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2-variations');font-weight:45 920;font-display:swap}
+:root{--bg:#CFCFCC;--panel:#E7E7E4;--chip:#D3D3D0;--fg:#0D0D0D;--mute:rgba(13,13,13,.5);--line:rgba(13,13,13,.14);--ac:#FF6A13;
+--disp:'Urbanist','Pretendard Variable',sans-serif;--kr:'Pretendard Variable',Pretendard,'IBM Plex Sans KR',sans-serif;--krh:'Pretendard Variable',Pretendard,sans-serif;--mono:'JetBrains Mono','Pretendard Variable',monospace;--pad:clamp(18px,3vw,44px)}
+html.dark{color-scheme:dark;--bg:#050505;--panel:#0E0E0E;--chip:#1E1E1E;--fg:#EDEDEA;--mute:rgba(237,237,234,.5);--line:rgba(237,237,234,.13)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--kr);font-size:16px;line-height:1.8;word-break:keep-all;padding:12px;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.frame{position:relative;background:var(--panel);border-radius:28px;min-height:calc(100vh - 24px);overflow:clip;isolation:isolate}
+.frame::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+ background-image:linear-gradient(to right,var(--line) 1px,transparent 1px);background-size:25% 100%;background-position:-1px 0}
+.mono{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.mute{color:var(--mute)}
+.plus{position:absolute;width:13px;height:13px;color:var(--fg);opacity:.55}
+.plus::before,.plus::after{content:"";position:absolute;background:currentColor}
+.plus::before{left:6px;top:0;width:1px;height:13px}.plus::after{top:6px;left:0;height:1px;width:13px}
+.sq{position:absolute;width:10px;height:10px;background:var(--ac)}
+/* nav */
+.nav{display:flex;gap:8px;padding:12px;position:sticky;top:0;z-index:20;margin-bottom:-76px;border-radius:28px;background:color-mix(in srgb,var(--panel) 82%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.nav.hide{transform:translateY(calc(-100% - 14px))}
+main.pad{padding-top:76px}
+@media (max-width:420px){.nav{margin-bottom:-62px}main.pad{padding-top:62px}}
+@media (prefers-reduced-motion:reduce){.nav{transition:none}}
+.nav .logo{flex:none;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#0D0D0D 0%,#0D0D0D 58%,#FF6A13 118%);color:#fff;display:grid;place-items:center;font-family:var(--mono);font-weight:500;font-size:13px;letter-spacing:.02em}
+.nav ul{display:flex;gap:8px;list-style:none}
+.pill{height:52px;display:inline-flex;align-items:center;gap:10px;padding:0 26px;border-radius:999px;background:var(--chip);font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;transition:background .2s,color .2s}
+.pill .n{opacity:.45;font-size:11px}
+.pill:hover{background:var(--fg);color:var(--panel)}
+.pill[aria-current=page]{background:var(--ac);color:#0D0D0D}
+.pill[aria-current=page] .n{opacity:.7}
+.dash{flex:1;height:52px;border:1.5px dashed var(--fg);border-radius:999px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+.dots{display:flex;gap:7px;align-items:center}
+.dots i{width:8px;height:8px;border-radius:50%;border:1px solid var(--fg)}
+.dots i.on{background:var(--ac);border-color:var(--ac)}
+.dots i.f{background:var(--fg)}
+/* giant cut-off wordmark band */
+.band{position:relative;background:#0A0A0A;color:#EDEDEA;border-radius:0 0 28px 28px;overflow:hidden;padding:28px var(--pad) 0;margin-top:clamp(40px,8vw,96px)}
+.band .brow{display:flex;justify-content:space-between;gap:16px;color:rgba(237,237,234,.55)}
+.band .big{font-family:var(--disp);font-weight:400;font-size:min(14.6vw,290px);line-height:.8;letter-spacing:-.05em;margin:clamp(20px,4vw,48px) 0 0 -.04em;padding-bottom:clamp(14px,2.2vw,32px);white-space:nowrap}
+@media (max-width:760px){.dash{display:none}.pill{padding:0 16px}.nav ul{flex:1}.nav li{flex:1}.pill{width:100%;justify-content:center}.pill .n{display:none}}
+@media (max-width:420px){body{padding:8px}.nav{gap:6px;padding:8px}.nav ul{gap:6px}.pill{height:46px;font-size:12px;padding:0 8px}.nav .logo{width:46px;height:46px}}
+
+.head{position:relative;display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:end;padding:clamp(40px,7vw,96px) var(--pad) clamp(20px,3vw,32px)}
+.head h1{font-family:var(--disp);font-weight:500;font-size:clamp(64px,10vw,168px);line-height:.85;letter-spacing:-.05em}
+.head .meta{justify-self:end;display:flex;flex-direction:column;align-items:flex-end;gap:14px;text-align:right}
+.acc{list-style:none;margin:0 var(--pad);border-top:1px solid var(--fg)}
+.acc li{position:relative;border-bottom:1px solid var(--line)}
+.row{all:unset;box-sizing:border-box;cursor:pointer;width:100%;display:grid;grid-template-columns:25% 1fr 56px;align-items:center;gap:12px;padding:clamp(16px,2vw,26px) 0}
+.row:focus-visible{outline:1.5px dashed var(--ac);outline-offset:4px}
+.row .no{display:flex;gap:10px;align-items:center}
+.row .no b{display:inline-grid;place-items:center;min-width:34px;height:24px;border:1px solid var(--fg);border-radius:999px;font-weight:500}
+.row .stt{font-family:var(--disp);font-weight:300;font-size:clamp(40px,6vw,96px);line-height:.95;letter-spacing:-.04em;transition:color .3s}
+.row .pm{position:relative;width:52px;height:52px;border-radius:50%;background:#fff;color:#0D0D0D;justify-self:end;transition:transform .3s cubic-bezier(.2,.7,.2,1),background .3s}
+.row .pm::before,.row .pm::after{content:"";position:absolute;left:17px;top:25.5px;width:18px;height:1.5px;background:currentColor}
+.row .pm::after{transform:rotate(90deg)}
+.row[aria-expanded=true] .pm{transform:rotate(45deg);background:var(--ac)}
+.row[aria-expanded=true] .stt{color:var(--ac)}
+.panel{height:0;overflow:hidden;transition:height .45s cubic-bezier(.2,.7,.2,1)}
+.panel .in{display:grid;grid-template-columns:25% minmax(0,1fr);gap:12px;padding:0 0 clamp(28px,3vw,44px)}
+.panel .lbl{align-self:start;padding-top:.5em}
+.panel .txt{grid-column:2;min-width:0;max-width:960px}
+.panel .txt>p{max-width:36em}
+.panel .txt>*{opacity:0;transform:translateY(16px)}
+.panel .txt>p+p{margin-top:1.1em}
+.panel .txt>.show{opacity:1;transform:none;transition:opacity .5s cubic-bezier(.2,.7,.2,1),transform .5s cubic-bezier(.2,.7,.2,1)}
+.head .plus.a{left:var(--pad);top:16px}
+@media (max-width:760px){.head{grid-template-columns:1fr}.head .meta{justify-self:start;align-items:flex-start;text-align:left}
+ .row{grid-template-columns:64px 1fr 44px}.row .no span{display:none}.row .pm{width:44px;height:44px}.row .pm::before,.row .pm::after{left:13px;top:21.5px}
+ .panel .in{grid-template-columns:1fr}.panel .lbl{display:none}.panel .txt{grid-column:1}}
+@media (prefers-reduced-motion:reduce){.panel,.row .pm,.bar .tr i,.stk .bx span{transition:none}.panel .txt>*{opacity:1;transform:none}}
+
+.fig{margin-top:clamp(24px,3vw,36px);border-top:1px solid var(--fg);padding-top:14px}
+.fig .fh{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-bottom:14px}
+.fig .fh h4{font-family:var(--krh);font-weight:600;font-size:16px}
+.fig .note{margin-top:12px;color:var(--mute);font-size:13px;line-height:1.6}
+/* overview */
+.ovw{margin:0 var(--pad) clamp(28px,4vw,48px)}
+.ovw ol{list-style:none;display:grid;grid-template-columns:repeat(8,minmax(0,1fr));gap:2px}
+.ovw li{background:var(--chip);padding:12px 10px 14px;min-height:92px;display:flex;flex-direction:column;justify-content:space-between;gap:8px;font-size:13px;line-height:1.35}
+.ovw li:first-child{border-radius:14px 0 0 14px}.ovw li:last-child{border-radius:0 14px 14px 0}
+.ovw li b{font-family:var(--mono);font-size:11px;font-weight:500;color:var(--mute)}
+.ovw .grp{display:grid;grid-template-columns:3fr 2fr 2fr 1fr;gap:2px;margin-top:6px}
+.ovw .grp span{border-top:2px solid var(--fg);padding-top:6px}
+.ovw .grp span.a{border-color:var(--ac)}
+/* context flow */
+.flow{display:grid;grid-template-columns:repeat(3,minmax(0,1fr)) 28px minmax(0,1.3fr);gap:8px;align-items:stretch}
+.flow .s{background:var(--chip);border-radius:14px;padding:12px;font-size:13px;line-height:1.5}
+.flow .s b{display:block;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--mute);margin-bottom:6px}
+.flow .arr{display:grid;place-items:center;font-size:20px}
+.flow .ctx{background:var(--fg);color:var(--panel);border-radius:14px;padding:12px 14px;font-size:14px;line-height:1.5}
+.flow .ctx b{display:block;font-family:var(--mono);font-size:11px;font-weight:500;color:var(--ac);margin-bottom:6px}
+.probs{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;margin-top:8px}
+.probs div{border:1px solid var(--line);border-radius:12px;padding:10px;font-size:13px;line-height:1.45}
+.probs b{font-family:var(--mono);font-weight:500;color:var(--ac);margin-right:4px}
+/* test matrix */
+.mx{width:100%;border-collapse:collapse;font-size:13px}
+.mx th,.mx td{text-align:left;vertical-align:top;padding:10px 8px;border-bottom:1px solid var(--line)}
+.mx thead th{font-family:var(--mono);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);border-bottom:1px solid var(--fg)}
+.mx tbody th{font-weight:500;white-space:nowrap}
+.mx tbody th small{display:block;font-weight:400;color:var(--mute);font-size:12px}
+.mx td small{display:block;color:var(--mute);font-size:12px;line-height:1.45;margin-top:4px}
+.mx tfoot td,.mx tfoot th{font-family:var(--mono);font-size:12px;border-bottom:0;padding-top:12px}
+.st{display:inline-flex;align-items:center;gap:6px;padding:3px 9px;border-radius:999px;font-size:12px;font-weight:500;white-space:nowrap}
+.st.ok{background:var(--fg);color:var(--panel)}
+.st.mid{background:var(--ac);color:#0D0D0D}
+.st.no{border:1px dashed var(--fg)}
+.lg{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;margin-top:12px}
+.scroll-x{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.scroll-x .mx{min-width:620px}
+/* bars */
+.bars{display:grid;gap:10px}
+.bar{display:grid;grid-template-columns:11em minmax(0,1fr) 3.2em;gap:12px;align-items:center;font-size:13px}
+.bar .tr{position:relative;height:22px;background:repeating-linear-gradient(to right,var(--line) 0 1px,transparent 1px 50%),linear-gradient(var(--line),var(--line)) right/1px 100% no-repeat}
+.bar.zero .tr::after{content:"";position:absolute;left:0;top:3px;bottom:3px;width:3px;border-radius:0 2px 2px 0;background:#9A9A96}
+.bar .tr i{position:absolute;left:0;top:3px;bottom:3px;width:0;border-radius:0 4px 4px 0;background:var(--fg);transition:width .8s cubic-bezier(.2,.7,.2,1)}
+.bar.gray .tr i{background:#9A9A96}.bar.ac .tr i{background:var(--ac)}
+.show .bar .tr i{width:var(--v)}
+.bar b{font-family:var(--mono);font-weight:500;text-align:right}
+.bar small{display:block;color:var(--mute);font-size:12px}
+.axis{display:grid;grid-template-columns:11em minmax(0,1fr) 3.2em;gap:12px;font-family:var(--mono);font-size:11px;color:var(--mute)}
+.axis div{display:flex;justify-content:space-between}
+.delta{font-family:var(--mono);font-size:12px;color:var(--ac);margin-left:6px}
+/* stacked */
+.stk{display:grid;gap:10px}
+.stk .r{display:grid;grid-template-columns:11em minmax(0,1fr);gap:12px;align-items:center;font-size:13px}
+.stk .r small{display:block;color:var(--mute);font-size:12px}
+.stk .bx{display:flex;gap:2px;height:34px}
+.stk .bx span{display:flex;align-items:center;padding:0 10px;font-family:var(--mono);font-size:12px;white-space:nowrap;overflow:hidden;flex:0 0 0;transition:flex-basis .8s cubic-bezier(.2,.7,.2,1)}
+.show .stk .bx span{flex-basis:calc(var(--v) - 1px)}
+.stk .bx .v{background:var(--fg);color:var(--panel);border-radius:4px 0 0 4px}
+.stk .bx .p{background:var(--ac);color:#0D0D0D;border-radius:0 4px 4px 0}
+.sw2{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:6px;vertical-align:-1px}
+/* principles + next */
+.prin{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.prin div{background:var(--chip);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.prin b{font-family:var(--mono);font-weight:500;font-size:12px;color:var(--ac)}
+.prin h5,.nx h5{font-family:var(--krh);font-weight:600;font-size:17px;letter-spacing:-.01em}
+.prin p,.nx p{font-size:13px;line-height:1.6;color:var(--mute)}
+.nx{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.nx .col{display:flex;flex-direction:column;gap:14px}
+.nx .col>div{border-top:1px solid var(--line);padding-top:10px}
+@media (max-width:760px){.prin,.nx{grid-template-columns:1fr}}
+/* before / after */
+.ba{width:100%;border-collapse:collapse;font-size:13px}
+.ba th,.ba td{text-align:left;vertical-align:top;padding:10px 8px;border-bottom:1px solid var(--line)}
+.ba thead th{font-family:var(--mono);font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.04em;color:var(--mute);border-bottom:1px solid var(--fg)}
+.ba tbody th{font-weight:500}
+.ba td.bf{color:var(--mute)}
+.ba td.af{font-weight:500}
+.ba td.af::before{content:"→ ";color:var(--ac)}
+@media (max-width:900px){.ovw ol{grid-template-columns:repeat(4,minmax(0,1fr))}.ovw li:first-child{border-radius:14px 0 0 0}.ovw li:nth-child(4){border-radius:0 14px 0 0}.ovw li:nth-child(5){border-radius:0 0 0 14px}.ovw li:last-child{border-radius:0 0 14px 0}.ovw .grp{display:none}
+ .flow{grid-template-columns:1fr}.flow .arr{transform:rotate(90deg);height:24px}.probs{grid-template-columns:1fr 1fr}}
+@media (max-width:600px){.bar,.axis,.stk .r{grid-template-columns:1fr}.axis span:first-child,.axis span:last-child{display:none}.bar b{text-align:left}}
+</style></head>
+<body><div class="frame"><header class="nav"><a class="logo" href="index.html" aria-label="UXD — 홈">UXD</a><nav aria-label="메뉴"><ul><li><a class="pill" href="index.html"><span class="n">01</span>Brief</a></li><li><a class="pill" href="detail.html" aria-current="page"><span class="n">02</span>Process</a></li><li><a class="pill" href="about.html"><span class="n">03</span>Note</a></li></ul></nav><div class="dash" aria-hidden="true">QCY T17 2.0 — Redesign</div></header><main class="pad"><div class="head"><span class="plus a"></span><h1>Process</h1><div class="meta"><span class="dots" aria-hidden="true"><i class="f"></i><i class="on"></i><i class=""></i></span><span class="mono mute">04 steps · Context / Prototype / Mapping / Conclusion</span></div></div><section class="ovw" aria-label="진행 과정"><div class="fig" style="margin-top:0"><div class="fh"><h4>진행 과정 한눈에 보기</h4><span class="mono mute">08 stages</span></div>
+<ol><li><b>01</b>맥락 설정 · 기기 분석</li><li><b>02</b>문제점 및 가설</li><li><b>03</b>인터뷰 및 문제정의</li><li><b>04</b>시안 A · B</li><li><b>05</b>웹 프로토타입 · 1차 테스트</li><li><b>06</b>매핑 수정</li><li><b>07</b>2차 테스트</li><li><b>08</b>결론 및 제언, 한계점</li></ol>
+<div class="grp mono"><span>01 Context</span><span class="a">02 Prototype</span><span>03 Mapping</span><span class="a">04 Conclusion</span></div></div></section><ul class="acc"><li><button class="row" aria-expanded="false" aria-controls="p0" id="b0"><span class="no mono"><b>01</b><span class="mute">Step</span></span><span class="stt">Context</span><span class="pm" aria-hidden="true"></span></button><div class="panel" id="p0" role="region" aria-labelledby="b0"><div class="in"><span class="lbl mono mute">— Context</span><div class="txt"><p>콘텐츠를 듣다가 누군가 이름을 부르면, 한쪽 이어버드를 빼고 대답한 뒤 다시 듣던 것으로 돌아간다. 카페 주문 대기, 편의점 계산, 사무실 업무 세 상황에서 공통으로 찾은 순간이고, 2차 테스트의 11명도 모두 말을 걸면 한쪽을 뺀다고 답했다.</p><p>이 순간 사용자는 콘텐츠를 멈추기보다 소리를 줄이고 싶어 한다. 하지만 T17은 이어버드에서 볼륨을 조절할 수 없고 터치 인식도 믿기 어려워, 조작이 매핑되어 있어도 결국 폰을 꺼내게 된다.</p><div class="fig"><div class="fh"><h4>세 상황에서 찾은 공통 맥락</h4><span class="mono mute">Context</span></div>
+<div class="flow"><div class="s"><b>상황 1</b>카페 주문 대기 — 콘텐츠를 들으며 기다리다 주문번호가 불리면 카운터로 간다.</div>
+<div class="s"><b>상황 2</b>편의점 계산 — 계산대에서 점원과 말을 주고받으며 결제한다.</div>
+<div class="s"><b>상황 3</b>사무실 개인 업무 — 동료나 상사가 이름을 부르면 대답하고 대화한다.</div>
+<div class="arr" aria-hidden="true">→</div>
+<div class="ctx"><b>CONTEXT</b>콘텐츠를 듣는 중, 주변 사람이 소리로 나의 반응을 요구해 즉시 응답한 뒤 다시 콘텐츠로 돌아가야 하는 순간</div></div>
+<div class="probs"><div><b>a</b>한쪽 착용 시 사라지는 기능</div><div><b>b</b>볼륨 조절 수단의 부재</div><div><b>c</b>시스템 상태의 가시성 부재</div><div><b>d</b>귀에서 뺀 버드의 오조작</div><div><b>e</b>버드를 빼도 계속되는 재생</div></div>
+<p class="note">우회행동에서 찾은 문제점 a~e. 이 다섯 가지로 가설을 세우고 인터뷰와 테스트 과업을 정했다.</p></div></div></div></div></li><li><button class="row" aria-expanded="false" aria-controls="p1" id="b1"><span class="no mono"><b>02</b><span class="mute">Step</span></span><span class="stt">Prototype</span><span class="pm" aria-hidden="true"></span></button><div class="panel" id="p1" role="region" aria-labelledby="b1"><div class="in"><span class="lbl mono mute">— Prototype</span><div class="txt"><p>귀에서 바로 조작하는 시안 A(원형 본체에서 이어지는 짧은 기둥에 볼륨 슬라이드)와 케이스에 시소형 볼륨 버튼을 둔 시안 B 가운데 A를 골라, 모바일 화면에서 실제 크기 28mm로 조작하는 3D 웹 프로토타입을 만들었다.</p><p>1차 테스트의 4명은 한 번 탭과 위아래 쓸기처럼 이미 아는 조작은 설명 없이 찾았다. 하지만 좌우 스와이프로 곡을 넘기는 조작은 3명이 찾지 못했고, 두 번 탭으로 직접 켜는 대화 모드는 1명만 쓰겠다고 했다.</p><div class="fig"><div class="fh"><h4>1차 테스트 결과 — 4명, 설명 없이 조작</h4><span class="mono mute">n = 4</span></div>
+<div class="scroll-x"><table class="mx"><thead><tr><th>참가자</th><th>재생·일시정지<br>한 번 탭</th><th>볼륨 조절<br>위아래 쓸기</th><th>곡 넘기기<br>좌우 스와이프</th><th>대화 모드<br>두 번 탭</th></tr></thead>
+<tbody><tr><th>참가자 A<small>에어팟 2</small></th><td><span class="st ok">성공</span><small>바로 찾음</small></td><td><span class="st ok">성공</span><small>조금 헤맸지만 기둥의 점을 보고 찾음</small></td><td><span class="st no">실패</span><small>찾지 못함</small></td><td><span class="st no">미사용</span><small>“알면 쓰겠지만 학습이 필요할 듯”</small></td></tr><tr><th>참가자 B<small>버즈2 프로</small></th><td><span class="st ok">성공</span><small>바로 찾음</small></td><td><span class="st mid">헤맴 후 성공</span><small>찾았지만 쓸다가 빠지거나 오작동할까 불안</small></td><td><span class="st no">실패</span><small>가장자리만 계속 탭함</small></td><td><span class="st ok">사용</span><small>사용할 것임</small></td></tr><tr><th>참가자 C<small>버즈3</small></th><td><span class="st ok">성공</span><small>바로 찾음</small></td><td><span class="st ok">성공</span><small>바로 찾음</small></td><td><span class="st mid">헤맴 후 성공</span><small>찾았지만 탭과 헷갈림</small></td><td><span class="st no">미사용</span><small>원래도 터치 기능 안 씀</small></td></tr><tr><th>참가자 D<small>에어팟 프로3</small></th><td><span class="st ok">성공</span><small>바로 찾음</small></td><td><span class="st ok">성공</span><small>기둥 탭 실패 후 쓸기로 찾음</small></td><td><span class="st no">실패</span><small>두 번 탭에 다음 곡을 기대 → “의외”</small></td><td><span class="st no">미사용</span><small>차라리 일시정지를 사용할 것 같음</small></td></tr></tbody><tfoot><tr><th>요약</th><td>4명 모두 성공</td><td>4명 모두 찾음<br>1명 착용 불안</td><td>4명 중 3명 실패</td><td>1명만 사용</td></tr></tfoot></table></div>
+<div class="lg"><span class="st ok">성공</span><span class="st mid">헤맴 후 성공</span><span class="st no">실패 / 미사용</span></div>
+<p class="note">이미 아는 조작(한 번 탭, 위아래 쓸기)은 통했고, 새로 배워야 하는 조작(좌우 스와이프, 두 번 탭 대화 모드)은 통하지 않았다.</p></div></div></div></div></li><li><button class="row" aria-expanded="false" aria-controls="p2" id="b2"><span class="no mono"><b>03</b><span class="mute">Step</span></span><span class="stt">Mapping</span><span class="pm" aria-hidden="true"></span></button><div class="panel" id="p2" role="region" aria-labelledby="b2"><div class="in"><span class="lbl mono mute">— Mapping</span><div class="txt"><p>그래서 곡 넘기기를 두 번 탭(다음 곡)과 세 번 탭(이전 곡)으로 바꿨고, 2차 테스트에서 점수는 2점 만점에 0.00에서 0.82로 올랐다. 모든 조작은 좌우 구분 없이 같고, 착용 감지로 귀에 있을 때만 터치가 작동해 손에 쥔 버드가 잘못 눌리지 않는다.</p><p>대화 모드는 사용자가 켜지 않아도 한쪽을 빼고 대화가 감지되면 자동으로 동작한다. 다만 11명 중 8명이 대화 중에는 볼륨 감소보다 일시정지를 원했고, 그 선택은 콘텐츠를 얼마나 놓치기 싫은지에 따라 갈렸다.</p><div class="fig"><div class="fh"><h4>기능별로 얼마나 잘 찾았나 — 평균 점수</h4><span class="mono mute">2차 · n = 11 · 2점 만점</span></div>
+<div class="bars">
+<div class="bar" title="재생·일시정지 1.82 / 2"><span>재생 · 일시정지<small>한 번 탭</small></span><div class="tr"><i style="--v:91%"></i></div><b>1.82</b></div>
+<div class="bar" title="볼륨 조절 1.73 / 2"><span>볼륨 조절<small>위아래 쓸기</small></span><div class="tr"><i style="--v:86.5%"></i></div><b>1.73</b></div>
+<div class="bar gray zero" title="곡 넘기기, 1차 시안 0.00 / 2 — 모두 찾지 못함"><span>곡 넘기기 · 1차 시안<small>앞뒤 스와이프 · 모두 찾지 못함</small></span><div class="tr"><i style="--v:0%"></i></div><b>0.00</b></div>
+<div class="bar ac" title="곡 넘기기, 2차 시안 0.82 / 2"><span>곡 넘기기 · 2차 시안<small>두 번 · 세 번 탭 <span class="delta">+0.82</span></small></span><div class="tr"><i style="--v:41%"></i></div><b>0.82</b></div>
+</div>
+<div class="axis" aria-hidden="true"><span></span><div><span>0 찾지 못함</span><span>1 헤맴 후 찾음</span><span>2 잘 찾음</span></div><span></span></div>
+<p class="note">점수 기준(관찰): 0점 찾지 못함(15초 이상), 1점 헤맨 뒤 찾음(3~15초), 2점 잘 찾음(3초 이하). 보고서의 1~3점 기준에서 1점씩 내려 다시 계산했다. 다음 곡(두 번 탭)은 잘 찾았지만 이전 곡(세 번 탭)은 잘 찾지 못했다.</p></div><div class="fig"><div class="fh"><h4>대화하는 1분 동안, 콘텐츠를 어떻게 할까</h4><span class="mono mute">2차에 1차 인원 포함</span></div>
+<div class="stk">
+<div class="r" title="1차: 볼륨 감소 3명(75%), 일시정지 1명(25%)"><span>1차 테스트<small>n = 4</small></span><div class="bx"><span class="v" style="--v:75%">볼륨 감소 75%</span><span class="p" style="--v:25%">25%</span></div></div>
+<div class="r" title="2차: 볼륨 감소 3명(27%), 일시정지 8명(73%)"><span>2차 테스트<small>n = 11</small></span><div class="bx"><span class="v" style="--v:27%">27%</span><span class="p" style="--v:73%">일시정지 73%</span></div></div>
+</div>
+<div class="lg"><span><i class="sw2" style="background:var(--fg)"></i>볼륨 감소, 계속 듣기</span><span><i class="sw2" style="background:var(--ac)"></i>일시정지</span></div>
+<p class="note">선택을 가르는 기준은 콘텐츠의 무게였다. 콘텐츠를 배경음으로 여기면 볼륨 감소, 놓치기 싫은 대상으로 여기면 일시정지를 골랐다.</p></div></div></div></div></li><li><button class="row" aria-expanded="false" aria-controls="p3" id="b3"><span class="no mono"><b>04</b><span class="mute">Step</span></span><span class="stt">Conclusion</span><span class="pm" aria-hidden="true"></span></button><div class="panel" id="p3" role="region" aria-labelledby="b3"><div class="in"><span class="lbl mono mute">— Conclusion</span><div class="txt"><p>최종안은 세 가지 원칙으로 정리된다. 좌우 구분 없이 어느 쪽을 끼든 같은 조작, 다른 이어버드에서 이미 익힌 탭 횟수와 기둥 쓸기를 그대로 쓰는 아는 문법, 그리고 배워야 할 조작은 기기가 대신하는 자동 대화 모드다.</p><p>다만 웹 프로토타입이라 실제 착용감, 주변 소음, 손가락 감각은 반영하지 못했고, 대화 감지는 구현하지 않아 혼잣말이나 주변 대화에 대한 오작동은 검증하지 못했다.</p><div class="fig"><div class="fh"><h4>리디자인의 세 가지 원칙</h4><span class="mono mute">Conclusion</span></div><div class="prin"><div><b>01</b><h5>좌우 구분 없이</h5><p>어느 쪽을 끼든 같은 조작. 한쪽만 껴도 기능이 사라지지 않는다.</p></div><div><b>02</b><h5>아는 문법 그대로</h5><p>탭 횟수와 기둥 쓸기는 다른 이어버드에서 이미 익힌 조작이라 학습 비용이 적다.</p></div><div><b>03</b><h5>배워야 할 조작은 기기가</h5><p>대화 모드는 사용자가 켜지 않아도 조건을 만족하면 자동으로 동작한다.</p></div></div></div><div class="fig"><div class="fh"><h4>개선 전 T17 → QCY T17 2.0</h4><span class="mono mute">Mapping</span></div><div class="scroll-x"><table class="ba"><thead><tr><th>기능</th><th>개선 전 QCY T17</th><th>리디자인 제안</th></tr></thead><tbody><tr><th>재생 / 일시정지</th><td class="bf">아무 이어버드 더블 탭</td><td class="af">한 번 탭 (좌우 동일)</td></tr><tr><th>다음 곡</th><td class="bf">오른쪽 이어버드 1.5초 탭</td><td class="af">두 번 탭 (좌우 동일)</td></tr><tr><th>이전 곡</th><td class="bf">왼쪽 이어버드 1.5초 탭</td><td class="af">세 번 탭 (좌우 동일)</td></tr><tr><th>볼륨 조절</th><td class="bf">없음 · 폰으로 조작</td><td class="af">기둥 쓸기 (위로 증가, 아래로 감소)</td></tr><tr><th>누가 불렀을 때</th><td class="bf">없음 · 폰이나 탭으로 직접 정지</td><td class="af">한쪽 빼기 + 대화 감지 → 자동 일시정지, 다시 끼면 이어 재생</td></tr><tr><th>뺀 이어버드 오조작</th><td class="bf">손에 쥔 버드도 터치가 작동</td><td class="af">착용 감지 — 귀에 있을 때만 터치 작동</td></tr><tr><th>음성 지원 · 저지연 모드</th><td class="bf">왼쪽 / 오른쪽 트리플 탭</td><td class="af">삭제 (활용도 낮음)</td></tr></tbody></table></div><p class="note">전화 받기 · 끊기 · 거절은 이번 리디자인 범위에서 다루지 않았다.</p></div><div class="fig"><div class="fh"><h4>향후 과제와 한계점</h4><span class="mono mute">Next</span></div><div class="nx"><div class="col"><span class="mono mute">향후 과제</span><div><h5>대화 중 처리 방식 심층 조사 · 커스텀</h5><p>볼륨 감소와 일시정지 가운데 무엇을 원하는지는 콘텐츠와 대화의 중요도에 따라 갈렸다. 사용자가 직접 고르는 커스텀 설정을 제공한다.</p></div><div><h5>더 직관적인 곡 이동 매핑</h5><p>이전 곡(세 번 탭)은 잘 찾지 못했다. 오른쪽 = 다음 곡, 왼쪽 = 이전 곡 의견도 있어, 한쪽만 끼는 맥락과 부딪히지 않는 매핑을 더 고민한다.</p></div></div><div class="col"><span class="mono mute">한계점</span><div><h5>환경</h5><p>실제 착용감, 주변 소음, 손가락 감각을 반영하지 못했다.</p></div><div><h5>버전</h5><p>2차 테스트 도중 곡 넘기기가 스와이프에서 탭으로 바뀌어 응답 시점마다 시안이 다르다.</p></div><div><h5>구현</h5><p>대화 감지를 구현하지 않아 혼잣말 · 주변 대화에 대한 오작동을 검증하지 못했다.</p></div></div></div></div></div></div></div></li></ul></main><footer class="band" aria-hidden="true"><div class="brow mono"><span>QCY T17 2.0</span><span>26-2 UXD</span><span>2026</span></div><div class="big">QCY T17 2.0</div></footer></div>
+<script>
+(()=>{const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const rows=[...document.querySelectorAll('.row')];let open=null,timers=[];
+const kids=p=>[...p.querySelector('.txt').children];
+const close=b=>{const p=document.getElementById(b.getAttribute('aria-controls'));
+ b.setAttribute('aria-expanded','false');p.style.height=p.scrollHeight+'px';p.offsetHeight;p.style.height='0px';
+ kids(p).forEach(x=>x.classList.remove('show'))};
+const openRow=b=>{const p=document.getElementById(b.getAttribute('aria-controls'));
+ b.setAttribute('aria-expanded','true');const ps=kids(p);timers.forEach(clearTimeout);timers=[];
+ if(reduce){ps.forEach(x=>x.classList.add('show'));p.style.height='auto';return}
+ ps.forEach(x=>x.classList.remove('show'));p.style.height=p.scrollHeight+'px';
+ const done=e=>{if(e.target!==p||e.propertyName!=='height')return;p.removeEventListener('transitionend',done);if(b.getAttribute('aria-expanded')==='true')p.style.height='auto'};
+ p.addEventListener('transitionend',done);
+ ps.forEach((x,i)=>timers.push(setTimeout(()=>x.classList.add('show'),60+i*120)))};
+rows.forEach(b=>b.addEventListener('click',()=>{if(open===b){close(b);open=null;return}if(open)close(open);openRow(b);open=b}));
+})();
+</script><script>(()=>{const n=document.querySelector('.nav');let y=scrollY,acc=0;addEventListener('scroll',()=>{const c=scrollY,d=c-y;y=c;if(c<80){n.classList.remove('hide');acc=0;return}acc=(Math.sign(d)===Math.sign(acc)?acc:0)+d;if(acc>12)n.classList.add('hide');else if(acc<-12)n.classList.remove('hide')},{passive:true});n.addEventListener('focusin',()=>n.classList.remove('hide'))})();</script></body></html>

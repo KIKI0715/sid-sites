@@ -28,17 +28,16 @@
   .idx{display:flex;justify-content:space-between;align-items:center;height:40px;font-size:13px;font-weight:700;line-height:1;
        font-variant-numeric:tabular-nums;letter-spacing:.02em}
   .idx .tag{color:var(--accent)}
-  .idx svg{display:block;width:12px;height:12px;transition:transform .2s ease-out}
+  .idx .host{color:var(--ink-muted)}
   .shot{position:relative;aspect-ratio:16/10;overflow:hidden;background:var(--surface);border:1px solid var(--hairline);transition:border-color .2s ease-out}
-  .shot iframe{position:absolute;left:0;top:0;width:1280px;height:800px;border:0;transform-origin:0 0;pointer-events:none;background:#fff;opacity:0;transition:opacity .2s ease-out}
+  .shot iframe{position:absolute;left:0;top:0;width:1280px;height:800px;border:0;transform-origin:0 0;pointer-events:none;background:var(--canvas);opacity:0;transition:opacity .2s ease-out}
   .shot iframe.on{opacity:1}
   .shot img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:top}
   .shot .wait{position:absolute;left:12px;bottom:8px;font-size:13px;line-height:1.6;color:var(--ink-muted)}
   h2{font-size:24px;font-weight:700;line-height:1.2;letter-spacing:-.01em;margin:16px 0 0}
   .line{color:var(--ink-muted);font-size:15px;line-height:1.6;margin:4px 0 0}
   .card a:hover .shot,.card a:focus-visible .shot{border-color:var(--ink)}
-  .card a:hover .idx svg,.card a:focus-visible .idx svg{transform:translate(2px,-2px)}
-  .card a:hover .idx,.card a:focus-visible .idx{color:var(--accent)}
+  .card a:hover .idx,.card a:focus-visible .idx,.card a:hover .idx .host,.card a:focus-visible .idx .host{color:var(--accent)}
   .card a:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
   footer{border-top:1px solid var(--ink);padding:24px 0 96px;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px 24px;color:var(--ink-muted)}
   footer p{margin:0}
@@ -78,8 +77,7 @@
     .gate button.go{width:100%}
   }
   @media (prefers-reduced-motion:reduce){
-    .idx svg,.shot,.shot iframe{transition:none}
-    .card a:hover .idx svg,.card a:focus-visible .idx svg{transform:none}
+    .shot,.shot iframe{transition:none}
   }
 </style>
 <script>
@@ -111,7 +109,7 @@ try{ if(sessionStorage.getItem('si-hub-token') || localStorage.getItem('si-hub-t
     <ul class="grid" id="grid" hidden></ul>
   </main>
   <footer id="foot" hidden>
-    <p>미리보기는 지금 올라가 있는 사이트를 그대로 보여 줘요. 만든 사람이 고쳐서 다시 올리면 여기도 같이 바뀌어요. 그렇게 넣을 수 없는 주소는 찍어 둔 화면으로 보여 줘요.</p>
+    <p>미리보기는 지금 올라가 있는 사이트를 그대로 보여 줘요. 만든 사람이 고쳐서 다시 올리면 여기도 같이 바뀌어요. 그렇게 넣을 수 없는 주소는 받아 둔 사본으로 보여 줘요. 사본은 받은 날의 모습이에요.</p>
     <p>인터랙션은 미리보기에서 되지 않아요. 카드를 눌러 사이트에서 해 보세요.</p>
   </footer>
 </div>
@@ -134,6 +132,8 @@ try{ if(sessionStorage.getItem('si-hub-token') || localStorage.getItem('si-hub-t
   function el(tag, cls, text){var e=document.createElement(tag); if(cls){e.className=cls;} if(text!=null){e.textContent=text;} return e;}
   function key(u){return String(u||'').trim().replace(/\/+$/,'').toLowerCase();}
   function cannotFrame(u){ try{ return new URL(u).hostname.replace(/^www\./,'') === 'claude.ai'; }catch(e){ return true; } }
+  /* 주소에서 올린 곳만 남긴다: sid-site.vercel.app → vercel.app. 앞쪽 이름에는 만든 사람의 아이디가 들어가기도 해서 카드에 내지 않는다 */
+  function hostOf(u){ try{ var p = new URL(u).hostname.replace(/^www\./,'').split('.'); var n = (p.length > 2 && p[p.length-1].length === 2 && p[p.length-2].length <= 3) ? 3 : 2; return p.slice(-n).join('.'); }catch(e){ return ''; } }
   function idOf(s){ return s.example ? 'ex:'+key(s.url) : (s.code || key(s.url)); }
   function picOf(s){ return still[key(s.url)] || ''; }
   function sigOf(s){ return [s.code||'', s.title||'', s.line||'', key(s.url), picOf(s), s.example?1:0].join('\u0001'); }
@@ -145,7 +145,8 @@ try{ if(sessionStorage.getItem('si-hub-token') || localStorage.getItem('si-hub-t
     var f = document.createElement('iframe');
     f.src = shot.dataset.url; f.title = shot.dataset.title + ' 미리보기';
     f.setAttribute('tabindex','-1'); f.setAttribute('aria-hidden','true'); f.setAttribute('scrolling','no');
-    f.setAttribute('sandbox','allow-scripts allow-same-origin');
+    /* 받아 둔 사본은 이 허브와 같은 곳에 있어서, 허브의 로그인 정보에 닿지 못하게 따로 떼어 연다 */
+    f.setAttribute('sandbox', shot.dataset.copy ? 'allow-scripts' : 'allow-scripts allow-same-origin');
     f.setAttribute('referrerpolicy','no-referrer');
     f.addEventListener('load',function(){var w=shot.querySelector('.wait'); if(w){w.remove();} f.className='on';});
     shot.appendChild(f); fit(shot);
@@ -162,8 +163,12 @@ try{ if(sessionStorage.getItem('si-hub-token') || localStorage.getItem('si-hub-t
     a.href = s.url; a.target = '_blank'; a.rel = 'noopener';
     var shot = el('div','shot'); shot.dataset.url = s.url; shot.dataset.title = s.title || s.code || '';
     var pic = picOf(s);
-    if(pic){
-      /* 다른 페이지 안에 넣을 수 없는 주소(claude.ai 아티팩트 등)는 찍어 둔 화면을 보여 준다 */
+    if(/^c\//.test(pic)){
+      /* 다른 페이지 안에 넣을 수 없는 주소(claude.ai 아티팩트 등)는 받아 둔 사본(c/…)을 미리보기로 연다. 카드를 누르면 원래 주소로 간다 */
+      shot.dataset.url = pic; shot.dataset.copy = '1';
+      shot.appendChild(el('span','wait','미리보기 불러오는 중'));
+    } else if(pic){
+      /* 사본이 없으면 찍어 둔 화면을 보여 준다 */
       var img = el('img'); img.src = pic; img.alt = ''; img.loading = 'lazy'; img.decoding = 'async';
       shot.dataset.still = '1'; shot.appendChild(img);
     } else if(cannotFrame(s.url)){
@@ -171,12 +176,10 @@ try{ if(sessionStorage.getItem('si-hub-token') || localStorage.getItem('si-hub-t
     } else {
       shot.appendChild(el('span','wait','미리보기 불러오는 중'));
     }
-    /* 카드 맨 위 줄: 별칭(예시 사이트는 "예시")과 화살표 */
+    /* 카드 맨 위 줄: 별칭(예시 사이트는 "예시")과 올린 곳 */
     var idx = el('div','idx');
     idx.appendChild(s.example ? el('span','tag','예시') : el('span','no',s.code || ''));
-    var go = el('span'); go.setAttribute('aria-hidden','true');
-    go.innerHTML = '<svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M2.5 9.5 9.5 2.5M3.5 2.5h6v6"/></svg>';
-    idx.appendChild(go);
+    idx.appendChild(el('span','host',hostOf(s.url)));
     a.appendChild(idx); a.appendChild(shot);
     a.appendChild(el('h2',null,s.title || s.code || ''));
     if(s.line){ a.appendChild(el('p','line',s.line)); }
@@ -245,7 +248,7 @@ try{ if(sessionStorage.getItem('si-hub-token') || localStorage.getItem('si-hub-t
     if(j.auth === false){ signOut('다시 로그인해 주세요.'); return false; }
     if(!j.ok){ return false; }
     still = {};
-    Object.keys(j.shots || {}).forEach(function(u){ if(typeof j.shots[u] === 'string' && /^shots\//.test(j.shots[u])){ still[key(u)] = j.shots[u]; } });
+    Object.keys(j.shots || {}).forEach(function(u){ if(typeof j.shots[u] === 'string' && (/^shots\//.test(j.shots[u]) || /^c\/[0-9a-f]{16}\/(#[\w-]*)?$/.test(j.shots[u]))){ still[key(u)] = j.shots[u]; } });
     var rows = tidy(j.rows);
     /* 시트가 제목을 다시 읽어 오는 몇 분 동안은 제목 칸이 빈 채로 온다. 그때는 같은 사람·같은 주소로 마지막에 본 제목과 한 줄을 그대로 쓴다 */
     rows.forEach(function(r){

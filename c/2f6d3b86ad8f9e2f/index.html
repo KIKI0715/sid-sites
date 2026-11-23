@@ -1,0 +1,413 @@
+<!doctype html><html><head>
+<!-- 실습 허브 미리보기용 사본. 원본: claude.ai 아티팩트. 받은 날: 2026-11-23 -->
+<meta name="robots" content="noindex"><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Plant Day</title>
+<style>@font-face{font-family:'Pretendard';src:url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2-variations'),url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2');font-weight:45 920;font-style:normal;font-display:swap}</style>
+<script>document.documentElement.classList.add('js');</script>
+<style>
+  :root {
+    --bg: #F6F7F2;
+    --ink: #1F2A22;
+    --green: #3F7D4E;
+    --title: clamp(64px, 16vw, 240px);
+    --head: calc(var(--title) / 3);
+    --gutter: clamp(16px, 5vw, 80px);
+    --numw: clamp(40px, 8vw, 128px);
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html { overflow-x: clip; -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Pretendard', sans-serif;
+    font-size: 16px;
+    font-weight: 400;
+    line-height: 1.8;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, p, ol, ul { margin: 0; padding: 0; }
+  ol, ul { list-style: none; }
+  a { color: inherit; text-decoration: none; }
+  button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+  :focus-visible { outline: 1px solid var(--green); outline-offset: 4px; }
+  .sr {
+    position: absolute; width: 1px; height: 1px; overflow: hidden;
+    clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap;
+  }
+
+  /* Menu */
+  .site-header { padding: 28px var(--gutter); }
+  .menu { display: flex; gap: clamp(20px, 3vw, 40px); }
+  .menu a {
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    line-height: 1.4;
+    padding: 6px 0;
+    display: inline-block;
+  }
+  .menu a[aria-current="page"] { font-weight: 600; color: var(--green); }
+
+  /* Type */
+  .site-title {
+    font-size: var(--title);
+    font-weight: 700;
+    line-height: 0.9;
+    letter-spacing: -0.04em;
+    white-space: nowrap;
+  }
+  .page-title, .sub {
+    font-size: var(--head);
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+  }
+  .num { font-size: 13px; letter-spacing: 0.04em; line-height: 1.4; }
+  .text { max-width: 34em; }
+
+  main { padding: 0 var(--gutter); }
+  .page { padding-top: clamp(56px, 10vw, 160px); padding-bottom: clamp(96px, 14vw, 200px); }
+  .page-title { margin-bottom: clamp(48px, 8vw, 128px); }
+
+  /* Index */
+  .hero {
+    min-height: 100vh;
+    min-height: 100svh;
+    display: flex;
+    align-items: flex-end;
+    padding-bottom: clamp(32px, 6vw, 80px);
+  }
+  .intro { padding: 28vh 0 40vh; }
+  .lead { max-width: 12em; }
+  .lead .w { white-space: nowrap; }
+  .js .lead .c {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+    transition-delay: calc(var(--i) * 0.04s);
+  }
+  .js .lead.in .c { opacity: 1; transform: none; }
+
+  /* Choose */
+  .steps { border-bottom: 1px solid var(--ink); }
+  .step { border-top: 1px solid var(--ink); }
+  .step-btn {
+    width: 100%;
+    display: grid;
+    grid-template-columns: var(--numw) minmax(0, 1fr) auto;
+    align-items: center;
+    padding: clamp(20px, 3vw, 40px) 0;
+    text-align: left;
+  }
+  .step-btn .sub { font-size: var(--head); }
+  .plus {
+    position: relative;
+    width: clamp(20px, 2.4vw, 32px);
+    height: clamp(20px, 2.4vw, 32px);
+    transition: transform 0.4s ease;
+  }
+  .plus::before, .plus::after {
+    content: "";
+    position: absolute;
+    background: var(--ink);
+  }
+  .plus::before { left: 0; right: 0; top: 50%; height: 1px; }
+  .plus::after { top: 0; bottom: 0; left: 50%; width: 1px; }
+  .step-btn[aria-expanded="true"] .plus { transform: rotate(45deg); }
+  .panel {
+    display: grid;
+    grid-template-rows: 0fr;
+    visibility: hidden;
+    transition: grid-template-rows 0.4s ease, visibility 0s linear 0.4s;
+  }
+  .panel.open {
+    grid-template-rows: 1fr;
+    visibility: visible;
+    transition: grid-template-rows 0.4s ease, visibility 0s;
+  }
+  .panel-in { overflow: hidden; min-height: 0; }
+  .panel p { padding: 0 0 clamp(32px, 4vw, 56px) var(--numw); }
+
+  /* Care */
+  .carousel {
+    max-width: 1040px;
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr) 48px;
+    grid-template-areas: "prev view next" ". dots .";
+    column-gap: clamp(16px, 3vw, 40px);
+    row-gap: 32px;
+    align-items: center;
+  }
+  .viewport {
+    grid-area: view;
+    overflow: hidden;
+    touch-action: pan-y;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+  .track {
+    display: flex;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .card {
+    flex: 0 0 100%;
+    min-width: 0;
+    border: 1px solid var(--ink);
+    padding: clamp(28px, 5vw, 64px);
+  }
+  .icon {
+    display: block;
+    width: 56px;
+    height: 56px;
+    margin-bottom: clamp(32px, 5vw, 64px);
+    overflow: visible;
+    fill: none;
+    stroke: var(--green);
+    stroke-width: 1;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+  .icon * { vector-effect: non-scaling-stroke; }
+  .icon .move { transform-box: view-box; }
+  .icon .drop { transform-origin: 12px 12px; }
+  .icon .sun { transform-origin: 12px 12px; }
+  .icon .leaf { transform-origin: 5px 19px; }
+  .card .num { display: block; margin-bottom: 8px; }
+  .card .sub { margin-bottom: clamp(20px, 3vw, 32px); }
+  .play .drop { animation: drop 0.8s cubic-bezier(0.5, 0, 0.75, 0) 0.2s both; }
+  .play .sun { animation: spin 2.4s ease-in-out 0.2s both; }
+  .play .leaf { animation: sway 1.8s ease-in-out 0.2s both; }
+  @keyframes drop {
+    0% { transform: translateY(-14px); opacity: 0; }
+    20% { opacity: 1; }
+    70% { transform: translateY(0); animation-timing-function: ease-out; }
+    84% { transform: translateY(-1.5px); animation-timing-function: ease-in; }
+    100% { transform: translateY(0); opacity: 1; }
+  }
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+  @keyframes sway {
+    0% { transform: rotate(0deg); }
+    20% { transform: rotate(9deg); }
+    45% { transform: rotate(-7deg); }
+    70% { transform: rotate(4deg); }
+    88% { transform: rotate(-2deg); }
+    100% { transform: rotate(0deg); }
+  }
+  .arrow {
+    width: 48px;
+    height: 48px;
+    display: grid;
+    place-items: center;
+  }
+  .arrow svg {
+    width: 24px; height: 24px;
+    fill: none; stroke: var(--ink); stroke-width: 1;
+    stroke-linecap: round; stroke-linejoin: round;
+  }
+  .arrow:disabled { cursor: default; opacity: 0.25; }
+  .prev { grid-area: prev; }
+  .next { grid-area: next; }
+  .dots { grid-area: dots; display: flex; justify-content: center; gap: 12px; }
+  .dot {
+    width: 8px; height: 8px;
+    border: 1px solid var(--ink);
+    border-radius: 50%;
+  }
+  .dot.on { background: var(--green); border-color: var(--green); }
+
+  @media (max-width: 600px) {
+    .carousel {
+      grid-template-columns: 48px minmax(0, 1fr) 48px;
+      grid-template-areas: "view view view" "prev dots next";
+      row-gap: 16px;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition: none !important;
+      animation: none !important;
+    }
+    .js .lead .c { opacity: 1; transform: none; }
+  }
+</style>
+<style>
+  /* Plant drawings */
+  .plant { display: block; overflow: visible; }
+  .plant * { vector-effect: non-scaling-stroke; }
+  .plant .lf { fill: var(--green); fill-opacity: 0.2; stroke: var(--green); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .plant .vein, .plant .stem { fill: none; stroke: var(--green); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .plant .pot { fill: var(--bg); stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+  .plant .soil { fill: var(--ink); fill-opacity: 0.12; stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+  .plant .tool { fill: var(--bg); stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .plant .tool-line { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .plant .drop, .plant .ripple, .plant .wind { opacity: 0; }
+  .plant .ripple { fill: none; stroke: var(--green); stroke-width: 2; }
+  .plant .wind { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
+  .scene-water .soil { fill-opacity: 0.34; }
+  .scene-light .tilt .lf { fill-opacity: 0.32; }
+
+  /* Index: 햇빛 드는 창가 */
+  :root { --sun: #F4D98A; }
+  body:has(.hero) main { overflow-x: clip; } /* 화면 밖으로 이어지는 선반이 가로 스크롤을 만들지 않게 */
+  body:has(.hero) .site-header { position: absolute; top: 0; left: 0; right: 0; z-index: 2; }
+  .hero {
+    position: relative;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: stretch;
+    gap: 24px;
+    padding: 88px 0 0;
+  }
+  .hero .site-title { position: relative; z-index: 1; align-self: flex-start; }
+  .lead { text-wrap: balance; }
+  .ws {
+    display: block;
+    width: calc(100% + 2 * var(--gutter));
+    max-width: 1440px; /* 1440 폭에서 보이던 크기보다 더 커지지 않는다 */
+    margin: 0 calc(-1 * var(--gutter));
+    align-self: flex-end; /* 오른쪽 화면 끝에 붙인다 */
+    height: auto;
+    aspect-ratio: 1440 / 900;
+    overflow: visible; /* 선반만 화면 양끝까지 이어진다 */
+  }
+  .ws * { vector-effect: non-scaling-stroke; }
+  .ws .ink { fill: var(--bg); stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .ws .line { fill: none; stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .ws .glass { fill: var(--sun); fill-opacity: 0.3; }
+  .ws .beams { fill: var(--sun); opacity: 0.28; animation: ws-breathe 6s ease-in-out infinite; }
+  .ws .soil { fill: var(--ink); fill-opacity: 0.12; stroke: var(--ink); stroke-width: 2; stroke-linejoin: round; }
+  .ws .stem, .ws .vein { fill: none; stroke: var(--green); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .ws .g20, .ws .g35, .ws .g55, .ws .g80, .ws .g100 { fill: var(--green); stroke: var(--green); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .ws .g20 { fill-opacity: 0.2; }
+  .ws .g35 { fill-opacity: 0.35; }
+  .ws .g55 { fill-opacity: 0.55; }
+  .ws .g80 { fill-opacity: 0.8; }
+  .ws .g100 { fill-opacity: 1; }
+  .ws .face { fill: var(--ink); }
+  .ws .sway { transform-box: view-box; animation: ws-sway 3.5s ease-in-out infinite; }
+  @keyframes ws-sway {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(3deg); }
+    75% { transform: rotate(-3deg); }
+  }
+  @keyframes ws-breathe {
+    0%, 100% { opacity: 0.2; }
+    50% { opacity: 0.35; }
+  }
+  @media (min-width: 601px) and (max-width: 999px) {
+    .ws { aspect-ratio: 1020 / 860; }
+  }
+  @media (max-width: 600px) {
+    .ws { aspect-ratio: 710 / 840; }
+    .ws .p-sans, .ws .p-succ, .ws .p-hang { display: none; }
+  }
+  @media (min-width: 1200px) {
+    /* 넓은 화면: 장면이 첫 화면을 채우고, 제목은 그 위 왼쪽 위에 얹는다 */
+    /* 장면의 창문 윗변(장면 높이의 80/900)이 제목 아래 끝(y 꼬리 포함)보다 32px 아래에 오도록 장면을 내린다 */
+    .hero {
+      justify-content: flex-end;
+      padding-top: calc(max(88px, 6.5vw) + 1.02 * var(--title) + 32px - min(100vw, 1440px) / 18);
+    }
+    .hero .site-title { position: absolute; top: max(88px, 6.5vw); left: 0; }
+  }
+
+  /* Care scenes */
+  .scene-btn { display: block; width: 70%; margin: 0 auto clamp(28px, 4vw, 48px); touch-action: pan-y; }
+  .scene { width: 100%; height: auto; overflow: hidden; }
+</style>
+
+
+<header class="site-header">
+  <nav aria-label="Menu">
+    <ul class="menu">
+      <li><a href="index.html" aria-current="page">Index</a></li>
+      <li><a href="choose.html">Choose</a></li>
+      <li><a href="care.html">Care</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main>
+  <section class="hero">
+    <h1 class="site-title">Plant Day</h1>
+    <svg class="ws" viewBox="0 0 1440 900" aria-hidden="true">
+      <g class="win"><rect class="glass" x="1040" y="80" width="320" height="440" rx="16"/><rect class="line" x="1040" y="80" width="320" height="440" rx="16"/><path class="line" d="M1200 80V520M1040 300H1360"/><rect class="ink" x="1026" y="520" width="348" height="14" rx="7"/></g>
+      <g class="beams"><path d="M1060 110L1120 110L560 900L440 900Z"/><path d="M1140 170L1220 170L720 900L600 900Z"/><path d="M1240 240L1300 240L880 900L790 900Z"/><path d="M1310 330L1350 330L1000 900L940 900Z"/></g>
+      <g class="shelf"><rect class="ink" x="-3000" y="630" width="7440" height="22" rx="8"/><path class="line" d="M300 652V690Q300 702 310 694L344 656"/><path class="line" d="M1190 652V690Q1190 702 1200 694L1234 656"/></g>
+      <g class="p-sans"><path class="soil" d="M607 564 Q640 554 673 564Z"/><g class="sway" style="transform-origin:640px 590px;animation-duration:3.6s;animation-delay:-0.4s"><path class="g55" d="M609 590 C606 507.5 596 477.5 602 440 C608 477.5 630 507.5 627 590Z"/><path class="g55" d="M621 590 C618 482.8 618 443.8 624 395 C630 443.8 642 482.8 639 590Z"/><path class="g55" d="M633 590 C630 474.5 640 432.5 646 380 C652 432.5 654 474.5 651 590Z"/><path class="g55" d="M645 590 C642 491 660 455 666 410 C672 455 666 491 663 590Z"/><path class="g55" d="M656 590 C653 515.8 679 488.8 685 455 C691 488.8 677 515.8 674 590Z"/></g><path class="ink" d="M605 580 L613.4 620 Q613.4 630 623.4 630 L656.6 630 Q666.6 630 666.6 620 L675 580Z"/><rect class="ink" x="600" y="564" width="80" height="16" rx="6"/></g>
+      <g class="p-cactus"><path class="soil" d="M759 576 Q790 566 821 576Z"/><g class="sway" style="transform-origin:790px 576px;animation-duration:3.2s;animation-delay:-1.3s"><ellipse class="g35" cx="790" cy="544" rx="32" ry="34"/><path class="stem" d="M778 514Q766 544 778 574M802 514Q814 544 802 574M790 510V576"/><path class="stem" d="M762 530l-6-3M818 530l6-3M760 556l-6 1M820 556l6 1"/><circle class="g100" cx="790" cy="507" r="5"/></g><path class="ink" d="M757 589 L764.9 620 Q764.9 630 774.9 630 L805.1 630 Q815.1 630 815.1 620 L823 589Z"/><rect class="ink" x="752" y="576" width="76" height="13" rx="6"/><g class="face-g"><circle class="face" cx="779.4" cy="604.6" r="2.6"/><circle class="face" cx="800.6" cy="604.6" r="2.6"/><path class="line" d="M784 612.6 Q790 617.6 796 612.6"/></g></g>
+      <g class="p-succ"><path class="soil" d="M875 588 Q900 578 925 588Z"/><g class="sway" style="transform-origin:900px 590px;animation-duration:3.9s;animation-delay:-2.1s"><g transform="translate(900 590) rotate(-72) scale(1)"><path class="g55" d="M0 0C-9-6-9-22 0-28C9-22 9-6 0 0Z"/></g><g transform="translate(900 590) rotate(-36) scale(1)"><path class="g55" d="M0 0C-9-6-9-22 0-28C9-22 9-6 0 0Z"/></g><g transform="translate(900 590) rotate(36) scale(1)"><path class="g55" d="M0 0C-9-6-9-22 0-28C9-22 9-6 0 0Z"/></g><g transform="translate(900 590) rotate(72) scale(1)"><path class="g55" d="M0 0C-9-6-9-22 0-28C9-22 9-6 0 0Z"/></g><g transform="translate(900 590) rotate(-18) scale(0.8)"><path class="g80" d="M0 0C-9-6-9-22 0-28C9-22 9-6 0 0Z"/></g><g transform="translate(900 590) rotate(18) scale(0.8)"><path class="g80" d="M0 0C-9-6-9-22 0-28C9-22 9-6 0 0Z"/></g><g transform="translate(900 590) rotate(0) scale(0.6)"><path class="g100" d="M0 0C-9-6-9-22 0-28C9-22 9-6 0 0Z"/></g></g><path class="ink" d="M873 598 L879.5 620 Q879.5 630 889.5 630 L910.5 630 Q920.5 630 920.5 620 L927 598Z"/><rect class="ink" x="868" y="588" width="64" height="10" rx="6"/><g class="face-g"><circle class="face" cx="891.4" cy="610.2" r="2.6"/><circle class="face" cx="908.6" cy="610.2" r="2.6"/><path class="line" d="M894 618.2 Q900 623.2 906 618.2"/></g></g>
+      <g class="p-mon"><path class="soil" d="M1052 534 Q1110 524 1168 534Z"/><g class="sway" style="transform-origin:1110px 534px;animation-duration:3.4s;animation-delay:-0.9s"><path class="stem" d="M1110 545Q1095 500 1070 440"/><path class="stem" d="M1110 545Q1104 470 1100 380"/><path class="stem" d="M1110 545Q1130 460 1150 370"/><path class="stem" d="M1110 545Q1150 500 1190 440"/><path class="stem" d="M1110 545Q1114 505 1120 470"/><g transform="translate(1150 370) rotate(20) scale(1.6)"><path class="g20" d="M0 0C-10 6-30 6-34-8L-12-10L-37-18C-38-26-36-32-34-34L-11-26L-31-42C-28-48-24-52-20-54L-7-42L-14-60C-9-66-4-70 0-72C4-70 9-66 14-60L7-42L20-54C24-52 28-48 31-42L11-26L34-34C36-32 38-26 37-18L12-10L34-8C30 6 10 6 0 0Z"/><path class="vein" d="M0-2V-64"/></g><g transform="translate(1100 380) rotate(-15) scale(1.7)"><path class="g20" d="M0 0C-10 6-30 6-34-8L-12-10L-37-18C-38-26-36-32-34-34L-11-26L-31-42C-28-48-24-52-20-54L-7-42L-14-60C-9-66-4-70 0-72C4-70 9-66 14-60L7-42L20-54C24-52 28-48 31-42L11-26L34-34C36-32 38-26 37-18L12-10L34-8C30 6 10 6 0 0Z"/><path class="vein" d="M0-2V-64"/></g><g transform="translate(1190 440) rotate(55) scale(1.4)"><path class="g20" d="M0 0C-10 6-30 6-34-8L-12-10L-37-18C-38-26-36-32-34-34L-11-26L-31-42C-28-48-24-52-20-54L-7-42L-14-60C-9-66-4-70 0-72C4-70 9-66 14-60L7-42L20-54C24-52 28-48 31-42L11-26L34-34C36-32 38-26 37-18L12-10L34-8C30 6 10 6 0 0Z"/><path class="vein" d="M0-2V-64"/></g><g transform="translate(1070 440) rotate(-55) scale(1.5)"><path class="g20" d="M0 0C-10 6-30 6-34-8L-12-10L-37-18C-38-26-36-32-34-34L-11-26L-31-42C-28-48-24-52-20-54L-7-42L-14-60C-9-66-4-70 0-72C4-70 9-66 14-60L7-42L20-54C24-52 28-48 31-42L11-26L34-34C36-32 38-26 37-18L12-10L34-8C30 6 10 6 0 0Z"/><path class="vein" d="M0-2V-64"/></g><g transform="translate(1120 470) rotate(5) scale(1)"><path class="g20" d="M0 0C-10 6-30 6-34-8L-12-10L-37-18C-38-26-36-32-34-34L-11-26L-31-42C-28-48-24-52-20-54L-7-42L-14-60C-9-66-4-70 0-72C4-70 9-66 14-60L7-42L20-54C24-52 28-48 31-42L11-26L34-34C36-32 38-26 37-18L12-10L34-8C30 6 10 6 0 0Z"/><path class="vein" d="M0-2V-64"/></g></g><path class="ink" d="M1050 557 L1064.4 620 Q1064.4 630 1074.4 630 L1145.6 630 Q1155.6 630 1155.6 620 L1170 557Z"/><rect class="ink" x="1045" y="534" width="130" height="23" rx="6"/></g>
+      <g class="p-pothos"><path class="soil" d="M1294 572 Q1330 562 1366 572Z"/><g class="sway" style="transform-origin:1330px 572px;animation-duration:3.7s;animation-delay:-1.7s"><path class="stem" d="M1322 576Q1314 550 1310 532M1330 576Q1332 540 1335 516M1338 576Q1348 552 1356 536"/><g transform="translate(1310 532) rotate(-35) scale(1.2)"><path class="g35" d="M0 0C-6-3-14-5-14-13C-14-21-6-25 0-31C6-25 14-21 14-13C14-5 6-3 0 0Z"/><path class="vein" d="M0-3V-25"/></g><g transform="translate(1335 516) rotate(0) scale(1.2)"><path class="g35" d="M0 0C-6-3-14-5-14-13C-14-21-6-25 0-31C6-25 14-21 14-13C14-5 6-3 0 0Z"/><path class="vein" d="M0-3V-25"/></g><g transform="translate(1356 536) rotate(35) scale(1.2)"><path class="g35" d="M0 0C-6-3-14-5-14-13C-14-21-6-25 0-31C6-25 14-21 14-13C14-5 6-3 0 0Z"/><path class="vein" d="M0-3V-25"/></g></g><path class="ink" d="M1292 586 L1301.1 620 Q1301.1 630 1311.1 630 L1348.9 630 Q1358.9 630 1358.9 620 L1368 586Z"/><rect class="ink" x="1287" y="572" width="86" height="14" rx="6"/><g class="sway" style="transform-origin:1330px 580px;animation-duration:4.0s;animation-delay:-0.2s"><path class="stem" d="M1300 576C1285 600 1280 660 1290 720C1296 760 1288 800 1292 840"/><path class="stem" d="M1360 576C1385 610 1392 680 1384 740C1378 780 1386 810 1382 830"/><g transform="translate(1284 640) rotate(200) scale(0.9)"><path class="g35" d="M0 0C-6-3-14-5-14-13C-14-21-6-25 0-31C6-25 14-21 14-13C14-5 6-3 0 0Z"/><path class="vein" d="M0-3V-25"/></g><g transform="translate(1292 705) rotate(165) scale(0.9)"><path class="g35" d="M0 0C-6-3-14-5-14-13C-14-21-6-25 0-31C6-25 14-21 14-13C14-5 6-3 0 0Z"/><path class="vein" d="M0-3V-25"/></g><g transform="translate(1290 770) rotate(195) scale(0.9)"><path class="g35" d="M0 0C-6-3-14-5-14-13C-14-21-6-25 0-31C6-25 14-21 14-13C14-5 6-3 0 0Z"/><path class="vein" d="M0-3V-25"/></g><g transform="translate(1292 838) rotate(180) scale(0.9)"><path class="g35" d="M0 0C-6-3-14-5-14-13C-14-21-6-25 0-31C6-25 14-21 14-13C14-5 6-3 0 0Z"/><path class="vein" d="M0-3V-25"/></g><g transform="translate(1390 650) rotate(160) scale(0.9)"><path class="g35" d="M0 0C-6-3-14-5-14-13C-14-21-6-25 0-31C6-25 14-21 14-13C14-5 6-3 0 0Z"/><path class="vein" d="M0-3V-25"/></g><g transform="translate(1386 720) rotate(195) scale(0.9)"><path class="g35" d="M0 0C-6-3-14-5-14-13C-14-21-6-25 0-31C6-25 14-21 14-13C14-5 6-3 0 0Z"/><path class="vein" d="M0-3V-25"/></g><g transform="translate(1381 790) rotate(170) scale(0.9)"><path class="g35" d="M0 0C-6-3-14-5-14-13C-14-21-6-25 0-31C6-25 14-21 14-13C14-5 6-3 0 0Z"/><path class="vein" d="M0-3V-25"/></g></g></g>
+      <g class="p-hang"><path class="line" d="M1405 0V120M1405 120L1386 168M1405 120L1424 168"/><g class="sway" style="transform-origin:1405px 170px;animation-duration:3.3s;animation-delay:-2.6s"><g transform="translate(1395 168) rotate(-30) scale(0.6)"><path class="g55" d="M0 0C-6-3-14-5-14-13C-14-21-6-25 0-31C6-25 14-21 14-13C14-5 6-3 0 0Z"/></g><g transform="translate(1415 168) rotate(30) scale(0.6)"><path class="g55" d="M0 0C-6-3-14-5-14-13C-14-21-6-25 0-31C6-25 14-21 14-13C14-5 6-3 0 0Z"/></g><path class="stem" d="M1390 196C1378 220 1384 255 1377 290"/><g transform="translate(1381 228) rotate(200) scale(0.6)"><path class="g55" d="M0 0C-6-3-14-5-14-13C-14-21-6-25 0-31C6-25 14-21 14-13C14-5 6-3 0 0Z"/></g><g transform="translate(1377 290) rotate(175) scale(0.6)"><path class="g55" d="M0 0C-6-3-14-5-14-13C-14-21-6-25 0-31C6-25 14-21 14-13C14-5 6-3 0 0Z"/></g></g><path class="ink" d="M1384 177Q1384 206 1405 206Q1426 206 1426 177Z"/><rect class="ink" x="1380" y="168" width="50" height="10" rx="5"/></g>
+    </svg>
+  </section>
+
+  <section class="intro">
+    <p class="lead sub" id="lead">
+      <span class="sr">Find the plant that fits you best.</span>
+      <span class="chars" aria-hidden="true">Find the plant that fits you best.</span>
+    </p>
+  </section>
+</main>
+
+<script>
+(function () {
+  var lead = document.getElementById('lead');
+  var holder = lead.querySelector('.chars');
+  var words = holder.textContent.trim().split(' ');
+  var i = 0;
+  holder.textContent = '';
+  words.forEach(function (word, w) {
+    if (w > 0) holder.appendChild(document.createTextNode(' '));
+    var ws = document.createElement('span');
+    ws.className = 'w';
+    Array.from(word).forEach(function (ch) {
+      var c = document.createElement('span');
+      c.className = 'c';
+      c.style.setProperty('--i', i++);
+      c.textContent = ch;
+      ws.appendChild(c);
+    });
+    holder.appendChild(ws);
+  });
+
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  if (reduce || !('IntersectionObserver' in window)) {
+    lead.classList.add('in');
+    return;
+  }
+  var io = new IntersectionObserver(function (entries) {
+    entries.forEach(function (entry) {
+      if (entry.isIntersecting) {
+        lead.classList.add('in');
+        io.disconnect();
+      }
+    });
+  }, { threshold: 0.5 });
+  io.observe(lead);
+})();
+
+// 화면 폭에 맞춰 장면을 자른다: 넓은 화면은 전체, 중간 폭은 식물 쪽, 좁은 화면(600px 이하)은 몬스테라·선인장·스킨답서스 쪽만
+(function () {
+  var ws = document.querySelector('.ws');
+  var small = window.matchMedia('(max-width: 600px)');
+  var mid = window.matchMedia('(min-width: 601px) and (max-width: 999px)');
+  function frame() {
+    ws.setAttribute('viewBox', small.matches ? '730 60 710 840' : mid.matches ? '420 40 1020 860' : '0 0 1440 900');
+  }
+  frame();
+  [small, mid].forEach(function (mq) {
+    if (mq.addEventListener) mq.addEventListener('change', frame); else mq.addListener(frame);
+  });
+})();
+</script>
+
+</body></html>

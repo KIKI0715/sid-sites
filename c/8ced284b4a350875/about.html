@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="ko"><head>
+<!-- 실습 허브 미리보기용 사본. 원본: claude.ai 아티팩트. 받은 날: 2026-11-23 -->
+<meta name="robots" content="noindex"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>QCY T17 2.0 — Note</title><script>try{if(localStorage.getItem('t17-theme')==='dark')document.documentElement.classList.add('dark')}catch(e){}</script><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500&family=JetBrains+Mono:wght@400;500&family=Urbanist:wght@300;400;500;700&display=swap" rel="stylesheet"><style>
+@font-face{font-family:'Pretendard Variable';src:url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/packages/pretendard/dist/web/variable/woff2/PretendardVariable.woff2') format('woff2-variations');font-weight:45 920;font-display:swap}
+:root{--bg:#CFCFCC;--panel:#E7E7E4;--chip:#D3D3D0;--fg:#0D0D0D;--mute:rgba(13,13,13,.5);--line:rgba(13,13,13,.14);--ac:#FF6A13;
+--disp:'Urbanist','Pretendard Variable',sans-serif;--kr:'Pretendard Variable',Pretendard,'IBM Plex Sans KR',sans-serif;--krh:'Pretendard Variable',Pretendard,sans-serif;--mono:'JetBrains Mono','Pretendard Variable',monospace;--pad:clamp(18px,3vw,44px)}
+html.dark{color-scheme:dark;--bg:#050505;--panel:#0E0E0E;--chip:#1E1E1E;--fg:#EDEDEA;--mute:rgba(237,237,234,.5);--line:rgba(237,237,234,.13)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--fg)}
+body{font-family:var(--kr);font-size:16px;line-height:1.8;word-break:keep-all;padding:12px;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+a{color:inherit;text-decoration:none}
+.frame{position:relative;background:var(--panel);border-radius:28px;min-height:calc(100vh - 24px);overflow:clip;isolation:isolate}
+.frame::before{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;
+ background-image:linear-gradient(to right,var(--line) 1px,transparent 1px);background-size:25% 100%;background-position:-1px 0}
+.mono{font-family:var(--mono);font-size:11px;letter-spacing:.06em;text-transform:uppercase}
+.mute{color:var(--mute)}
+.plus{position:absolute;width:13px;height:13px;color:var(--fg);opacity:.55}
+.plus::before,.plus::after{content:"";position:absolute;background:currentColor}
+.plus::before{left:6px;top:0;width:1px;height:13px}.plus::after{top:6px;left:0;height:1px;width:13px}
+.sq{position:absolute;width:10px;height:10px;background:var(--ac)}
+/* nav */
+.nav{display:flex;gap:8px;padding:12px;position:sticky;top:0;z-index:20;margin-bottom:-76px;border-radius:28px;background:color-mix(in srgb,var(--panel) 82%,transparent);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);transition:transform .35s cubic-bezier(.2,.7,.2,1)}
+.nav.hide{transform:translateY(calc(-100% - 14px))}
+main.pad{padding-top:76px}
+@media (max-width:420px){.nav{margin-bottom:-62px}main.pad{padding-top:62px}}
+@media (prefers-reduced-motion:reduce){.nav{transition:none}}
+.nav .logo{flex:none;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#0D0D0D 0%,#0D0D0D 58%,#FF6A13 118%);color:#fff;display:grid;place-items:center;font-family:var(--mono);font-weight:500;font-size:13px;letter-spacing:.02em}
+.nav ul{display:flex;gap:8px;list-style:none}
+.pill{height:52px;display:inline-flex;align-items:center;gap:10px;padding:0 26px;border-radius:999px;background:var(--chip);font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;transition:background .2s,color .2s}
+.pill .n{opacity:.45;font-size:11px}
+.pill:hover{background:var(--fg);color:var(--panel)}
+.pill[aria-current=page]{background:var(--ac);color:#0D0D0D}
+.pill[aria-current=page] .n{opacity:.7}
+.dash{flex:1;height:52px;border:1.5px dashed var(--fg);border-radius:999px;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-size:13px;letter-spacing:.06em;text-transform:uppercase;opacity:.85}
+.dots{display:flex;gap:7px;align-items:center}
+.dots i{width:8px;height:8px;border-radius:50%;border:1px solid var(--fg)}
+.dots i.on{background:var(--ac);border-color:var(--ac)}
+.dots i.f{background:var(--fg)}
+/* giant cut-off wordmark band */
+.band{position:relative;background:#0A0A0A;color:#EDEDEA;border-radius:0 0 28px 28px;overflow:hidden;padding:28px var(--pad) 0;margin-top:clamp(40px,8vw,96px)}
+.band .brow{display:flex;justify-content:space-between;gap:16px;color:rgba(237,237,234,.55)}
+.band .big{font-family:var(--disp);font-weight:400;font-size:min(14.6vw,290px);line-height:.8;letter-spacing:-.05em;margin:clamp(20px,4vw,48px) 0 0 -.04em;padding-bottom:clamp(14px,2.2vw,32px);white-space:nowrap}
+@media (max-width:760px){.dash{display:none}.pill{padding:0 16px}.nav ul{flex:1}.nav li{flex:1}.pill{width:100%;justify-content:center}.pill .n{display:none}}
+@media (max-width:420px){body{padding:8px}.nav{gap:6px;padding:8px}.nav ul{gap:6px}.pill{height:46px;font-size:12px;padding:0 8px}.nav .logo{width:46px;height:46px}}
+
+.wrap{display:grid;grid-template-columns:1fr 1fr;gap:12px;padding:clamp(28px,5vw,64px) 12px 0}
+.card{position:relative;background:var(--chip);border-radius:24px;padding:clamp(22px,3vw,40px);min-height:clamp(320px,40vw,520px);display:flex;flex-direction:column;justify-content:space-between;overflow:hidden}
+.card.l{border-radius:24px 120px 24px 24px}
+.card.r{border-radius:120px 24px 24px 24px}
+.card .glow{position:absolute;z-index:0;inset:auto -20% -40% -20%;height:90%;background:radial-gradient(closest-side,rgba(255,106,19,.5),rgba(255,106,19,0));filter:blur(24px);pointer-events:none}
+.card>*{position:relative;z-index:1}
+.ttl{font-family:var(--disp);font-weight:500;font-size:clamp(64px,10vw,168px);line-height:.85;letter-spacing:-.05em}
+.who{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.who .nm{display:flex;flex-direction:column;gap:10px}
+.who .role{display:block}
+.who h2{font-family:var(--disp);font-weight:500;font-size:clamp(40px,5vw,72px);line-height:.95;letter-spacing:-.04em}
+.sw{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:12px;height:52px;padding:0 10px 0 20px;border-radius:999px;background:var(--panel)}
+.sw:focus-visible{outline:1.5px dashed var(--ac);outline-offset:4px}
+.track{position:relative;width:52px;height:30px;border-radius:15px;background:var(--fg)}
+.knob{position:absolute;top:4px;left:4px;width:22px;height:22px;border-radius:50%;background:var(--panel);transition:transform .25s cubic-bezier(.2,.7,.2,1)}
+.sw[aria-checked=true] .knob{transform:translateX(22px);background:var(--ac)}
+.lbl{min-width:3.6em}
+.txt{display:grid;grid-template-columns:1fr 20px;gap:24px}
+.txt .pl{display:flex;flex-direction:column;gap:14px;padding-top:6px}
+.txt .pl span{position:relative;width:13px;height:13px;opacity:.55}
+.txt .pl span::before,.txt .pl span::after{content:"";position:absolute;background:var(--fg)}
+.txt .pl span::before{left:6px;width:1px;height:13px}.txt .pl span::after{top:6px;height:1px;width:13px}
+.tbl{display:grid;grid-template-columns:auto 1fr;gap:4px 28px;margin-top:28px}
+.tbl dt{color:var(--mute)}
+.r .top{display:flex;justify-content:flex-end}
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+@media (max-width:760px){.wrap{grid-template-columns:1fr}.card.l,.card.r{border-radius:24px 80px 24px 24px;min-height:0;gap:40px}}
+@media (prefers-reduced-motion:reduce){.knob{transition:none}}
+</style></head>
+<body><div class="frame"><header class="nav"><a class="logo" href="index.html" aria-label="UXD — 홈">UXD</a><nav aria-label="메뉴"><ul><li><a class="pill" href="index.html"><span class="n">01</span>Brief</a></li><li><a class="pill" href="detail.html"><span class="n">02</span>Process</a></li><li><a class="pill" href="about.html" aria-current="page"><span class="n">03</span>Note</a></li></ul></nav><div class="dash" aria-hidden="true">QCY T17 2.0 — Redesign</div></header><main class="pad"><section class="wrap">
+<div class="card l"><div class="glow"></div>
+<div class="who-top"><span class="dots" aria-hidden="true"><i class="f"></i><i class="f"></i><i class="on"></i></span><h1 class="ttl" style="margin-top:28px">Note</h1></div>
+<div class="who"><div class="nm"><span class="mono mute role">Designer</span><h2>Soyul Park</h2></div>
+<button class="sw mono" id="sw" role="switch" aria-checked="false"><span class="lbl" id="lbl">Light</span><span class="track"><span class="knob"></span></span></button></div>
+</div>
+<div class="card r">
+<div class="top mono mute">About the maker</div>
+<div><div class="txt"><p>이어버드는 하루 중 가장 오래 몸에 닿아 있는 물건인데, 정작 누가 부를 때마다 폰을 꺼내게 만든다. 매일 겪던 그 몇 초를 귀에서 하는 조작 하나로 줄여 보고 싶어서 T17을 다시 설계했다.</p><div class="pl" aria-hidden="true"><span></span><span></span><span></span></div></div>
+<dl class="tbl mono"><dt>Name :</dt><dd>Soyul Park</dd><dt>Project :</dt><dd>QCY T17 2.0</dd><dt>Course :</dt><dd>26-2 UXD</dd></dl></div>
+</div>
+</section></main><footer class="band" aria-hidden="true"><div class="brow mono"><span>QCY T17 2.0</span><span>26-2 UXD</span><span>2026</span></div><div class="big">QCY T17 2.0</div></footer></div>
+<script>
+(()=>{const sw=document.getElementById('sw'),lbl=document.getElementById('lbl'),root=document.documentElement;
+let dark=root.classList.contains('dark'),busy=false;sw.setAttribute('aria-checked',String(dark));lbl.textContent=dark?'Dark':'Light';const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+sw.addEventListener('click',()=>{if(busy)return;const next=!dark;sw.setAttribute('aria-checked',String(next));lbl.textContent=next?'Dark':'Light';
+ const apply=()=>root.classList.toggle('dark',next);const finish=()=>{dark=next;busy=false;try{localStorage.setItem('t17-theme',next?'dark':'light')}catch(e){}};
+ if(reduce||!document.startViewTransition){apply();finish();return}
+ busy=true;const r=sw.querySelector('.track').getBoundingClientRect(),x=r.left+r.width/2,y=r.top+r.height/2;
+ const R=Math.hypot(Math.max(x,innerWidth-x),Math.max(y,innerHeight-y));
+ {const vt=document.startViewTransition(apply);
+  vt.ready.then(()=>root.animate({clipPath:[`circle(0px at ${x}px ${y}px)`,`circle(${R}px at ${x}px ${y}px)`]},{duration:700,easing:'cubic-bezier(.2,.7,.2,1)',pseudoElement:'::view-transition-new(root)'}));
+  vt.finished.then(finish,finish)}});
+})();
+</script><script>(()=>{const n=document.querySelector('.nav');let y=scrollY,acc=0;addEventListener('scroll',()=>{const c=scrollY,d=c-y;y=c;if(c<80){n.classList.remove('hide');acc=0;return}acc=(Math.sign(d)===Math.sign(acc)?acc:0)+d;if(acc>12)n.classList.add('hide');else if(acc<-12)n.classList.remove('hide')},{passive:true});n.addEventListener('focusin',()=>n.classList.remove('hide'))})();</script></body></html>
